@@ -1,0 +1,21 @@
+{
+  "name": "ecommerce-laravel-react",
+  "version": "1.0.0",
+  "description": "Ecommerce moderno con Laravel y React",
+  "scripts": {
+    "install-all": "cd backend && composer install && cd ../frontend && npm install",
+    "dev": "concurrently \"cd backend && php artisan serve\" \"cd frontend && npm run dev\"",
+    "backend": "cd backend && php artisan serve",
+    "frontend": "cd frontend && npm run dev",
+    "migrate": "cd backend && php artisan migrate",
+    "seed": "cd backend && php artisan db:seed"
+  },
+  "keywords": [
+    "laravel",
+    "react",
+    "ecommerce",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@layer components {
+  .btn {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition-property: all;
+    transition-duration: 200ms;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .btn-primary {
+    background-color: rgb(37 99 235);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: rgb(29 78 216);
+  }
+  
+  .btn-primary:active {
+    background-color: rgb(30 64 175);
+  }
+  
+  .btn-secondary {
+    background-color: rgb(229 231 235);
+    color: rgb(31 41 55);
+  }
+  
+  .btn-secondary:hover {
+    background-color: rgb(209 213 219);
+  }
+  
+  .btn-secondary:active {
+    background-color: rgb(156 163 175);
+  }
+  
+  .btn-danger {
+    background-color: rgb(220 38 38);
+    color: white;
+  }
+  
+  .btn-danger:hover {
+    background-color: rgb(185 28 28);
+  }
+  
+  .btn-danger:active {
+    background-color: rgb(153 27 27);
+  }
+  
+  .input {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 0.5rem;
+    outline: none;
+    transition-property: all;
+    transition-duration: 200ms;
+  }
+  
+  .input:focus {
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5);
+    border-color: rgb(59 130 246);
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    padding: 1.5rem;
+  }
+}
+
