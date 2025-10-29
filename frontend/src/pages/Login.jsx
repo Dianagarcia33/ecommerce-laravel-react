@@ -33,25 +33,25 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full opacity-10 blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500 rounded-full opacity-10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-lime-400 rounded-full opacity-15 blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-400 rounded-full opacity-15 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
       {/* Floating Icons */}
       <div className="absolute inset-0 pointer-events-none">
-        <ShoppingBagIcon className="absolute top-20 left-10 w-12 h-12 text-blue-300 opacity-10 animate-float" />
-        <SparklesIcon className="absolute top-40 right-20 w-16 h-16 text-cyan-300 opacity-10 animate-float" style={{ animationDelay: '1s' }} />
-        <ShoppingBagIcon className="absolute bottom-32 left-1/4 w-14 h-14 text-blue-300 opacity-10 animate-float" style={{ animationDelay: '2s' }} />
+        <ShoppingBagIcon className="absolute top-20 left-10 w-12 h-12 text-cyan-300 opacity-20 animate-float" />
+        <SparklesIcon className="absolute top-40 right-20 w-16 h-16 text-lime-300 opacity-20 animate-float" style={{ animationDelay: '1s' }} />
+        <ShoppingBagIcon className="absolute bottom-32 left-1/4 w-14 h-14 text-orange-300 opacity-20 animate-float" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="max-w-md w-full relative z-10">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 p-4 rounded-2xl shadow-2xl mb-4">
-            <ShoppingBagIcon className="h-12 w-12 text-white" />
+          <div className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-400 to-cyan-600 p-4 rounded-2xl shadow-2xl mb-4">
+            <ShoppingBagIcon className="h-12 w-12 text-gray-900" />
           </div>
           <h2 className="text-4xl font-extrabold text-white mb-2">Bienvenido de nuevo</h2>
           <p className="text-gray-300">Inicia sesión en tu cuenta</p>
@@ -83,7 +83,7 @@ export default function Login() {
                   type="email"
                   required
                   placeholder="tu@email.com"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
@@ -104,7 +104,7 @@ export default function Login() {
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
@@ -115,7 +115,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold py-4 rounded-xl hover:from-blue-700 hover:to-cyan-700 focus:ring-4 focus:ring-blue-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold py-4 rounded-xl hover:from-cyan-300 hover:to-cyan-500 focus:ring-4 focus:ring-cyan-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <>
@@ -144,7 +144,7 @@ export default function Login() {
           {/* Register Link */}
           <Link
             to="/register"
-            className="block w-full text-center py-3 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300"
+            className="block w-full text-center py-3 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-600 transition-all duration-300"
           >
             Crear una cuenta nueva
           </Link>

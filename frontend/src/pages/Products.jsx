@@ -10,6 +10,8 @@ import {
 } from '@heroicons/react/24/outline'
 import api from '../services/api'
 
+
+
 export default function Products() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -68,16 +70,16 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header */}
-      <section className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500 rounded-full blur-3xl"></div>
+      <section className="relative bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900 text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 opacity-15">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-lime-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-400 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full px-4 py-2 mb-6 shadow-lg">
+          <div className="inline-flex items-center bg-gradient-to-r from-cyan-400 to-lime-400 rounded-full px-4 py-2 mb-6 shadow-lg text-gray-900 font-bold">
             <SparklesIcon className="w-5 h-5 mr-2" />
-            <span className="text-sm font-bold">Catálogo Completo</span>
+            <span className="text-sm">Catálogo Completo</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 drop-shadow-2xl">
             Nuestros Productos
@@ -101,7 +103,7 @@ export default function Products() {
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
             />
           </div>
 
@@ -116,8 +118,8 @@ export default function Products() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                   !selectedCategory
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
+                    ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
                 }`}
               >
                 Todos
@@ -128,8 +130,8 @@ export default function Products() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                     selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
+                      ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 shadow-lg'
+                      : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
                   }`}
                 >
                   {category.name}
@@ -142,7 +144,7 @@ export default function Products() {
         {/* Grid de productos */}
         {loading ? (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
             <p className="text-gray-600 mt-4 font-medium">Cargando productos...</p>
           </div>
         ) : error ? (
@@ -195,7 +197,7 @@ export default function Products() {
                 {/* Contenido */}
                 <div className="p-5">
                   <Link to={`/products/${product.id}`}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[56px]">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2 min-h-[56px]">
                       {product.name}
                     </h3>
                   </Link>
@@ -207,7 +209,7 @@ export default function Products() {
                   {/* Precio y botón */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div>
-                      <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                      <span className="text-3xl font-extrabold bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">
                         ${product.price}
                       </span>
                     </div>
@@ -217,7 +219,7 @@ export default function Products() {
                       className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${
                         product.stock === 0
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:from-blue-700 hover:to-cyan-700'
+                          : 'bg-gradient-to-r from-lime-400 to-green-500 text-gray-900 hover:shadow-lg hover:from-lime-300 hover:to-green-400'
                       }`}
                     >
                       <ShoppingCartIcon className="w-5 h-5" />
