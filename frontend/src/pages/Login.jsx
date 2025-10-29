@@ -51,7 +51,7 @@ export default function Login() {
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-400 to-cyan-600 p-4 rounded-2xl shadow-2xl mb-4">
-            <ShoppingBagIcon className="h-12 w-12 text-gray-900" />
+            <ShoppingBagIcon className="h-12 w-12 text-white" />
           </div>
           <h2 className="text-4xl font-extrabold text-white mb-2">Bienvenido de nuevo</h2>
           <p className="text-gray-300">Inicia sesión en tu cuenta</p>
@@ -115,7 +115,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold py-4 rounded-xl hover:from-cyan-300 hover:to-cyan-500 focus:ring-4 focus:ring-cyan-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white font-bold py-4 rounded-xl hover:from-cyan-300 hover:to-cyan-500 focus:ring-4 focus:ring-cyan-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <>
@@ -137,7 +137,7 @@ export default function Login() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500 font-medium">¿Primera vez aquí?</span>
+              <span className="px-4 bg-gray-100 text-gray-500 font-medium">¿Primera vez aquí?</span>
             </div>
           </div>
 

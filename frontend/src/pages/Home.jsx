@@ -103,7 +103,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link 
                 to="/products" 
-                className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold rounded-full shadow-2xl hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 hover:scale-105"
+                className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white font-bold rounded-full shadow-2xl hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 hover:scale-105"
               >
                 <span className="relative z-10 flex items-center">
                   Ver Productos
@@ -217,7 +217,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
                 to="/products" 
-                className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 font-bold rounded-full shadow-xl hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 hover:scale-105"
+                className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white font-bold rounded-full shadow-xl hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 hover:scale-105"
               >
                 Explorar Catálogo
                 <ShoppingBagIcon className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />

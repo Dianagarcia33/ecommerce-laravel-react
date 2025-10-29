@@ -63,7 +63,7 @@ export default function Register() {
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center bg-gradient-to-r from-lime-400 to-green-500 p-4 rounded-2xl shadow-2xl mb-4">
-            <ShoppingBagIcon className="h-12 w-12 text-gray-900" />
+            <ShoppingBagIcon className="h-12 w-12 text-white" />
           </div>
           <h2 className="text-4xl font-extrabold text-white mb-2">Únete a nosotros</h2>
           <p className="text-gray-300">Crea tu cuenta y comienza a comprar</p>
@@ -171,7 +171,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-lime-400 to-green-500 text-gray-900 font-bold py-4 rounded-xl hover:from-lime-300 hover:to-green-400 focus:ring-4 focus:ring-lime-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl mt-6"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-lime-400 to-green-500 text-white font-bold py-4 rounded-xl hover:from-lime-300 hover:to-green-400 focus:ring-4 focus:ring-lime-200 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl mt-6"
             >
               {loading ? (
                 <>
@@ -193,7 +193,7 @@ export default function Register() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500 font-medium">¿Ya tienes cuenta?</span>
+              <span className="px-4 bg-gray-100 text-gray-500 font-medium">¿Ya tienes cuenta?</span>
             </div>
           </div>
 
