@@ -139,6 +139,7 @@ class DatabaseSeeder extends Seeder
             'image' => 'https://via.placeholder.com/300x300?text=Cafetera'
         ]);
 
-     
+        // Crear imágenes para productos
+        $this->call(ProductImagesSeeder::class);
     }
 }
