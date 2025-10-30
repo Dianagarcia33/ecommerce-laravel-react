@@ -18,6 +18,12 @@ class ProductController extends Controller
 
         $products = $query->get();
         return response()->json($products);
+
+        $products->each(function($product) {
+        if ($product->image) {
+            $product->image_url = url('storage/products/' . $product->image);
+        }
+    });
     }
 
     public function store(Request $request)
@@ -40,6 +46,8 @@ class ProductController extends Controller
 
     public function show(string $id)
     {
+        
+
         $product = Product::with('category')->findOrFail($id);
         return response()->json($product);
     }
