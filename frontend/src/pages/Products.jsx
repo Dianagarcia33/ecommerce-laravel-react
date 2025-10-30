@@ -172,7 +172,7 @@ export default function Products() {
               >
                 {/* Imagen del producto */}
                 <div className="relative overflow-hidden bg-gray-100">
-                  <Link to={`/products/${product.id}`}>
+                  <Link to={`/product/${product.id}/parallax`}>
                     <img
                       src={product.image || 'https://via.placeholder.com/300'}
                       alt={product.name}
@@ -196,7 +196,7 @@ export default function Products() {
 
                 {/* Contenido */}
                 <div className="p-5">
-                  <Link to={`/products/${product.id}`}>
+                  <Link to={`/product/${product.id}/parallax`}>
                     <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2 min-h-[56px]">
                       {product.name}
                     </h3>

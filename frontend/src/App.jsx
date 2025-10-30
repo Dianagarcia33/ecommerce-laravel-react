@@ -5,6 +5,8 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
+import ProductLanding from './pages/ProductLanding'
+import ProductLandingParallax from './pages/ProductLandingParallax'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Login from './pages/Login'
@@ -24,6 +26,8 @@ function App() {
               <Route index element={<Home />} />
               <Route path="products" element={<Products />} />
               <Route path="products/:id" element={<ProductDetail />} />
+              <Route path="product/:id/landing" element={<ProductLanding />} />
+              <Route path="product/:id/parallax" element={<ProductLandingParallax />} />
               <Route path="cart" element={<Cart />} />
               <Route path="checkout" element={<Checkout />} />
               <Route path="orders" element={<Orders />} />
