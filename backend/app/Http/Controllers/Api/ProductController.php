@@ -34,11 +34,25 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|string',
+            // 'image' => 'nullable|file|image|max:2048',
         ]);
 
         // Generar slug automáticamente
         $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image');
+            $originalname = $path->getClientOriginalName();
+            $extension = $path->getClientOriginalExtension();
+            $namesinextension = pathinfo($originalname, PATHINFO_FILENAME);
+            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension); 
+            $clientname = preg_replace('/_+/', '_', $clientname);
+            $clientname = trim($clientname, '_');
+            $clientname = strtolower($clientname);
+            $filename = $clientname . '_' . time() . '.' . $extension;
+            $path = $request->file('image')->storeAs('products', $filename, 'public');
+            $validated['image'] = $path;
+        }
 
         $product = Product::create($validated);
         return response()->json($product->load('category'), 201);
@@ -60,12 +74,26 @@ class ProductController extends Controller
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'image' => 'nullable|string',
+            'image' => 'nullable|file|image|max:2048',
         ]);
 
         // Generar slug si se actualiza el nombre
         if (isset($validated['name'])) {
             $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        }
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image');
+            $originalname = $path->getClientOriginalName();
+            $extension = $path->getClientOriginalExtension();
+            $namesinextension = pathinfo($originalname, PATHINFO_FILENAME);
+            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension); 
+            $clientname = preg_replace('/_+/', '_', $clientname);
+            $clientname = trim($clientname, '_');
+            $clientname = strtolower($clientname);
+            $filename = $clientname . '_' . time() . '.' . $extension;
+            $path = $request->file('image')->storeAs('products', $filename, 'public');
+            $validated['image'] = $path;
         }
 
         $product->update($validated);

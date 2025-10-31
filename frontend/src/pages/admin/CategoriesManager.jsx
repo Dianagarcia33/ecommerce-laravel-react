@@ -134,7 +134,7 @@ export default function CategoriesManager() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium  duration-300 transform hover:scale-105 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg"
                 >
                   <TrashIcon className="h-4 w-4" />
                   Eliminar

@@ -94,7 +94,7 @@ export default function Cart() {
                   {/* Info */}
                   <div className="flex-1 text-center sm:text-left">
                     <Link 
-                      to={`/products/${item.id}`} 
+                      to={`/product/${item.id}/parallax`} 
                       className="text-xl font-bold text-gray-900 hover:text-cyan-600 transition-colors block mb-2"
                     >
                       {item.name}
@@ -182,14 +182,14 @@ export default function Cart() {
               <div className="space-y-3">
                 <Link 
                   to="/checkout" 
-                  className="block w-full bg-gradient-to-r from-lime-400 to-green-500 text-gray-900 py-4 rounded-full hover:from-lime-300 hover:to-green-400 text-center font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="block w-full bg-gradient-to-r from-cyan-400 to-cyan-600 text-white py-4 rounded-full hover:from-cyan-500 hover:to-cyan-700 text-center font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   Proceder al Pago
                 </Link>
                 
                 <Link 
                   to="/products" 
-                  className="block w-full bg-gray-100 text-gray-700 py-4 rounded-full hover:bg-gray-200 text-center font-bold transition-all duration-300"
+                  className="block w-full py-4 bg-gradient-to-r rounded-full hover:scale-105 bg-white text-gray-900 border-2 border-gray-200 hover:border-cyan-300 text-center font-bold shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Continuar Comprando
                 </Link>

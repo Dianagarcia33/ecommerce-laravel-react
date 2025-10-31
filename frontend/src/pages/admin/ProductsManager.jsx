@@ -46,6 +46,20 @@ export default function ProductsManager() {
     // Aquí necesitarías el token de autenticación
     const token = localStorage.getItem('token');
 
+    const form = new FormData();
+
+    // Agregar los campos del producto
+    form.append('name', formData.name);
+    form.append('description', formData.description);
+    form.append('price', formData.price);
+    form.append('stock', formData.stock);
+    form.append('category_id', formData.category_id);
+
+    // Agregar imagen si existe
+    if (formData.image instanceof File) {
+      form.append('image', formData.image);
+    }
+
     try {
       const url = editingProduct
         ? `http://localhost:8000/api/products/${editingProduct.id}`
@@ -247,14 +261,42 @@ export default function ProductsManager() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">URL de Imagen</label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
-                  required
-                />
+                <label className="block text-gray-700 mb-2">Cargar de Imagen</label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData({ ...formData, image: file, imagePreview: reader.result });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 "
+                  />
+                  <div className="w-full h-48 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-all">
+                    {formData.imagePreview ? (
+                      <img 
+                        src={formData.imagePreview} 
+                        alt="Preview" 
+                        className="h-full w-full object-contain rounded-xl"
+                      />
+                    ) : (
+                      <div className="text-center px-4">
+                        <div className="text-gray-500">
+                          <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <p className="mt-1">Haz clic para seleccionar una imagen</p>
+                          <p className="text-sm text-gray-400">PNG y JPG 2MB</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex gap-4">
                 <button

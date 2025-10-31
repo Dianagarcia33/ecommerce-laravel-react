@@ -23,7 +23,7 @@ class ProductImagesSeeder extends Seeder
             for ($i = 1; $i <= $imageCount; $i++) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url' => "https://via.placeholder.com/800x800?text=Product+{$product->id}+Image+{$i}",
+                    'image_url' => "storage/products+{$product->id}+Image+{$i}",
                     'is_primary' => $i === 1, // Primera imagen es la principal
                     'order' => $i,
                 ]);
