@@ -26,14 +26,14 @@ export default function CategoriesManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const token = localStorage.getItem('token');
-    
+
     try {
-      const url = editingCategory 
+      const url = editingCategory
         ? `http://localhost:8000/api/categories/${editingCategory.id}`
         : 'http://localhost:8000/api/categories';
-      
+
       const response = await fetch(url, {
         method: editingCategory ? 'PUT' : 'POST',
         headers: {
@@ -59,9 +59,9 @@ export default function CategoriesManager() {
 
   const handleDelete = async (id) => {
     if (!confirm('¿Estás seguro de eliminar esta categoría?')) return;
-    
+
     const token = localStorage.getItem('token');
-    
+
     try {
       const response = await fetch(`http://localhost:8000/api/categories/${id}`, {
         method: 'DELETE',
@@ -108,7 +108,7 @@ export default function CategoriesManager() {
           <h1 className="text-3xl font-bold text-gray-900">Gestión de Categorías</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+            className="flex items-center gap-2 px-5 py-2 rounded-full font-medium transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
           >
             <PlusIcon className="h-5 w-5" />
             Nueva Categoría
@@ -123,17 +123,18 @@ export default function CategoriesManager() {
               <p className="text-sm text-gray-500 mb-4">
                 {category.products_count || 0} productos
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <button
-                  onClick={() => handleEdit(category)}
-                  className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                  type="submit"
+                  className="flex-1 flex items-center justify-center gap-2 px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
                 >
                   <PencilIcon className="h-4 w-4" />
-                  Editar
+                  {editingCategory ? 'Actualizar' : 'Editar'}
                 </button>
                 <button
-                  onClick={() => handleDelete(category.id)}
-                  className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg"
                 >
                   <TrashIcon className="h-4 w-4" />
                   Eliminar
@@ -146,7 +147,7 @@ export default function CategoriesManager() {
 
       {/* Modal para crear/editar categoría */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-lg bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4">
               {editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}
@@ -158,7 +159,7 @@ export default function CategoriesManager() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 />
               </div>
@@ -167,21 +168,21 @@ export default function CategoriesManager() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   rows="3"
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+                  className="flex-1 px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
                 >
                   {editingCategory ? 'Actualizar' : 'Crear'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                  className="flex-1 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300"
                 >
                   Cancelar
                 </button>

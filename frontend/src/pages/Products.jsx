@@ -118,7 +118,7 @@ export default function Products() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                   !selectedCategory
-                    ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 shadow-lg'
+                    ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg'
                     : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
                 }`}
               >
@@ -130,7 +130,7 @@ export default function Products() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                     selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 shadow-lg'
+                      ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg'
                       : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
                   }`}
                 >
@@ -219,7 +219,7 @@ export default function Products() {
                       className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${
                         product.stock === 0
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-lime-400 to-green-500 text-white hover:shadow-lg hover:from-lime-300 hover:to-green-400'
+                          : 'bg-gradient-to-r from-lime-500 to-green-500 text-white hover:shadow-lg hover:from-lime-300 hover:to-green-400'
                       }`}
                     >
                       <ShoppingCartIcon className="w-5 h-5" />

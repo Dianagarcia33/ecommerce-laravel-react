@@ -18,7 +18,7 @@ export default function Dashboard() {
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">Productos</h2>
                 <p className="text-gray-600">Gestionar productos</p>
               </div>
-              <ShoppingBagIcon className="h-12 w-12 text-indigo-600" />
+              <ShoppingBagIcon className="h-12 w-12 text-cyan-400" />
             </div>
           </Link>
 
@@ -32,7 +32,7 @@ export default function Dashboard() {
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">Categorías</h2>
                 <p className="text-gray-600">Gestionar categorías</p>
               </div>
-              <TagIcon className="h-12 w-12 text-indigo-600" />
+              <TagIcon className="h-12 w-12 text-cyan-400" />
             </div>
           </Link>
 

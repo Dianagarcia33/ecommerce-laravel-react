@@ -42,15 +42,15 @@ export default function ProductsManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Aquí necesitarías el token de autenticación
     const token = localStorage.getItem('token');
-    
+
     try {
-      const url = editingProduct 
+      const url = editingProduct
         ? `http://localhost:8000/api/products/${editingProduct.id}`
         : 'http://localhost:8000/api/products';
-      
+
       const response = await fetch(url, {
         method: editingProduct ? 'PUT' : 'POST',
         headers: {
@@ -76,9 +76,9 @@ export default function ProductsManager() {
 
   const handleDelete = async (id) => {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
-    
+
     const token = localStorage.getItem('token');
-    
+
     try {
       const response = await fetch(`http://localhost:8000/api/products/${id}`, {
         method: 'DELETE',
@@ -133,7 +133,7 @@ export default function ProductsManager() {
           <h1 className="text-3xl font-bold text-gray-900">Gestión de Productos</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+            className="flex items-center gap-2 px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
           >
             <PlusIcon className="h-5 w-5" />
             Nuevo Producto
@@ -165,7 +165,7 @@ export default function ProductsManager() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      className="text-cyan-400 hover:text-cyan-600 mr-4"
                     >
                       <PencilIcon className="h-5 w-5" />
                     </button>
@@ -185,7 +185,7 @@ export default function ProductsManager() {
 
       {/* Modal para crear/editar producto */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-lg bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4">
               {editingProduct ? 'Editar Producto' : 'Nuevo Producto'}
@@ -197,7 +197,7 @@ export default function ProductsManager() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 />
               </div>
@@ -206,7 +206,7 @@ export default function ProductsManager() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   rows="3"
                   required
                 />
@@ -216,7 +216,7 @@ export default function ProductsManager() {
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 >
                   <option value="">Seleccionar categoría</option>
@@ -232,7 +232,7 @@ export default function ProductsManager() {
                   step="0.01"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 />
               </div>
@@ -242,7 +242,7 @@ export default function ProductsManager() {
                   type="number"
                   value={formData.stock}
                   onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 />
               </div>
@@ -252,21 +252,21 @@ export default function ProductsManager() {
                   type="url"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
                   required
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+                  className="flex-1 px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
                 >
                   {editingProduct ? 'Actualizar' : 'Crear'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                  className="flex-1 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300"
                 >
                   Cancelar
                 </button>
