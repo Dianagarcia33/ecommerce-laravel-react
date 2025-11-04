@@ -19,11 +19,11 @@ class ProductImagesSeeder extends Seeder
         foreach ($products as $product) {
             // Crear 3-5 imágenes por producto
             $imageCount = rand(3, 5);
-            
+
             for ($i = 1; $i <= $imageCount; $i++) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url' => "storage/products+{$product->id}+Image+{$i}",
+                    'image_url' => "storage/products/{$product->id}_image_{$i}.jpg",
                     'is_primary' => $i === 1, // Primera imagen es la principal
                     'order' => $i,
                 ]);

@@ -19,11 +19,6 @@ class ProductController extends Controller
         $products = $query->get();
         return response()->json($products);
 
-        $products->each(function($product) {
-        if ($product->image) {
-            $product->image_url = url('storage/products/' . $product->image);
-        }
-    });
     }
 
     public function store(Request $request)
@@ -34,28 +29,32 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            // 'image' => 'nullable|file|image|max:2048',
+            'images.*' => 'required|image|max:2048',
         ]);
 
         // Generar slug automáticamente
         $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        $product = Product::create($validated);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image');
-            $originalname = $path->getClientOriginalName();
-            $extension = $path->getClientOriginalExtension();
-            $namesinextension = pathinfo($originalname, PATHINFO_FILENAME);
-            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension); 
-            $clientname = preg_replace('/_+/', '_', $clientname);
-            $clientname = trim($clientname, '_');
-            $clientname = strtolower($clientname);
-            $filename = $clientname . '_' . time() . '.' . $extension;
-            $path = $request->file('image')->storeAs('products', $filename, 'public');
-            $validated['image'] = $path;
+        // Guardar las imágenes
+        foreach ($request->file('images') as $index => $image) {
+            $originalname = $image->getClientOriginalName();
+            $extension = $image->getClientOriginalExtension();
+            $basename = pathinfo($originalname, PATHINFO_FILENAME);
+            $cleanName = preg_replace('/[^A-Za-z0-9\-]/', '_', $basename);
+            $cleanName = strtolower(trim($cleanName, '_'));
+            $filename = $cleanName . '_' . time() . '.' . $extension;
+
+            $path = $image->storeAs('products', $filename, 'public');
+
+            $product->images()->create([
+                'image_url' => $path,
+                'is_primary' => $index === 0, // Primera imagen como principal
+                'order' => $index + 1,
+            ]);
         }
 
-        $product = Product::create($validated);
-        return response()->json($product->load('category'), 201);
+        return response()->json($product->load('category', 'images'), 201);
     }
 
     public function show(string $id)
@@ -67,7 +66,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
-        
+
         $validated = $request->validate([
             'category_id' => 'sometimes|exists:categories,id',
             'name' => 'sometimes|string|max:255|unique:products,name,' . $id,
@@ -87,7 +86,7 @@ class ProductController extends Controller
             $originalname = $path->getClientOriginalName();
             $extension = $path->getClientOriginalExtension();
             $namesinextension = pathinfo($originalname, PATHINFO_FILENAME);
-            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension); 
+            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension);
             $clientname = preg_replace('/_+/', '_', $clientname);
             $clientname = trim($clientname, '_');
             $clientname = strtolower($clientname);
@@ -103,6 +102,12 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
+
+        foreach ($product->images as $image) {
+            \Storage::disk('public')->delete($image->image_url);
+            $image->delete();
+        }
+
         $product->delete();
         return response()->json(null, 204);
     }

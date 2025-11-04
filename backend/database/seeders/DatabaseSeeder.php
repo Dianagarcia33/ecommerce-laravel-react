@@ -54,7 +54,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Laptop HP con procesador Intel Core i5, 8GB RAM, 256GB SSD',
             'price' => 599.99,
             'stock' => 10,
-            'image' => 'https://via.placeholder.com/300x300?text=Laptop+HP'
         ]);
 
         Product::create([
@@ -64,7 +63,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Mouse inalámbrico ergonómico con batería de larga duración',
             'price' => 29.99,
             'stock' => 50,
-            'image' => 'https://via.placeholder.com/300x300?text=Mouse+Logitech'
         ]);
 
         Product::create([
@@ -74,7 +72,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Teclado mecánico gaming con iluminación RGB personalizable',
             'price' => 89.99,
             'stock' => 25,
-            'image' => 'https://via.placeholder.com/300x300?text=Teclado+RGB'
         ]);
 
         // Crear productos de Ropa
@@ -85,7 +82,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Camiseta 100% algodón, cómoda y versátil',
             'price' => 19.99,
             'stock' => 100,
-            'image' => 'https://via.placeholder.com/300x300?text=Camiseta+Blanca'
         ]);
 
         Product::create([
@@ -95,7 +91,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Jeans de corte slim fit, estilo moderno',
             'price' => 49.99,
             'stock' => 60,
-            'image' => 'https://via.placeholder.com/300x300?text=Jeans'
         ]);
 
         Product::create([
@@ -105,7 +100,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Chaqueta de cuero sintético, estilo casual',
             'price' => 129.99,
             'stock' => 15,
-            'image' => 'https://via.placeholder.com/300x300?text=Chaqueta'
         ]);
 
         // Crear productos de Hogar
@@ -116,7 +110,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Lámpara LED ajustable con control táctil',
             'price' => 34.99,
             'stock' => 40,
-            'image' => 'https://via.placeholder.com/300x300?text=Lampara+LED'
         ]);
 
         Product::create([
@@ -126,7 +119,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Set de toallas 100% algodón, suaves y absorbentes',
             'price' => 39.99,
             'stock' => 30,
-            'image' => 'https://via.placeholder.com/300x300?text=Toallas'
         ]);
 
         Product::create([
@@ -136,7 +128,6 @@ class DatabaseSeeder extends Seeder
             'description' => 'Cafetera programable con temporizador y jarra térmica',
             'price' => 79.99,
             'stock' => 20,
-            'image' => 'https://via.placeholder.com/300x300?text=Cafetera'
         ]);
 
         // Crear imágenes para productos

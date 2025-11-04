@@ -125,15 +125,17 @@ export default function CategoriesManager() {
               </p>
               <div className="flex gap-4">
                 <button
+                  onClick={() => handleEdit(category)}
                   type="submit"
                   className="flex-1 flex items-center justify-center gap-2 px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg"
                 >
                   <PencilIcon className="h-4 w-4" />
                   {editingCategory ? 'Actualizar' : 'Editar'}
+
                 </button>
                 <button
                   type="button"
-                  onClick={handleCloseModal}
+                  onClick={() => handleDelete(category.id)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium  duration-300 transform hover:scale-105 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg"
                 >
                   <TrashIcon className="h-4 w-4" />

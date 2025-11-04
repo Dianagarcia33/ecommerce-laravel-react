@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function ProductsManager() {
   const [products, setProducts] = useState([]);
@@ -12,7 +13,8 @@ export default function ProductsManager() {
     price: '',
     stock: '',
     category_id: '',
-    image: ''
+    images: [],
+    imagePreviews: []
   });
 
   useEffect(() => {
@@ -30,6 +32,45 @@ export default function ProductsManager() {
     }
   };
 
+  const handleImageUpload = (e, formData, setFormData) => {
+    const newFiles = Array.from(e.target.files);
+
+    // Combinar las imágenes nuevas con las anteriores
+    const combinedFiles = [...formData.images, ...newFiles];
+
+    // Validar que haya entre 3 y 5 imágenes
+    if (combinedFiles.length > 5) {
+      alert('Solo puedes subir un máximo de 5 imágenes.');
+      e.target.value = '';
+      return;
+    }
+
+    // Generar las vistas previas solo de las nuevas imágenes
+    const readers = newFiles.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve({ file, preview: reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(readers)
+      .then(newImages => {
+        setFormData({
+          ...formData,
+          images: combinedFiles,
+          imagePreviews: [
+            ...formData.imagePreviews,
+            ...newImages.map(i => i.preview)
+          ]
+        });
+      })
+      .catch(() => {
+        alert('Error al cargar las imágenes.');
+      });
+  };
+
   const fetchCategories = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/categories');
@@ -43,22 +84,20 @@ export default function ProductsManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Aquí necesitarías el token de autenticación
     const token = localStorage.getItem('token');
-
     const form = new FormData();
 
-    // Agregar los campos del producto
+    // Agregar campos del producto
     form.append('name', formData.name);
     form.append('description', formData.description);
     form.append('price', formData.price);
     form.append('stock', formData.stock);
     form.append('category_id', formData.category_id);
 
-    // Agregar imagen si existe
-    if (formData.image instanceof File) {
-      form.append('image', formData.image);
-    }
+    // Agregar imágenes (mínimo 3, máximo 5)
+    formData.images.forEach((img) => {
+      form.append('images[]', img);
+    });
 
     try {
       const url = editingProduct
@@ -66,24 +105,26 @@ export default function ProductsManager() {
         : 'http://localhost:8000/api/products';
 
       const response = await fetch(url, {
-        method: editingProduct ? 'PUT' : 'POST',
+        method: editingProduct ? 'POST' : 'POST', 
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: form, 
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         fetchProducts();
         handleCloseModal();
         alert(editingProduct ? 'Producto actualizado' : 'Producto creado');
       } else {
+        console.error('Error del servidor:', data);
         alert('Error al guardar el producto');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error de red:', error);
       alert('Error al guardar el producto');
     }
   };
@@ -137,6 +178,16 @@ export default function ProductsManager() {
       stock: '',
       category_id: '',
       image: ''
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    const updatedImages = formData.images.filter((_, i) => i !== index);
+    const updatedPreviews = formData.imagePreviews.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      images: updatedImages,
+      imagePreviews: updatedPreviews,
     });
   };
 
@@ -251,9 +302,10 @@ export default function ProductsManager() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Stock</label>
+                <label className="block text-gray-700 mb-2">Cantidad</label>
                 <input
                   type="number"
+                  step="1"
                   value={formData.stock}
                   onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
                   className="w-full pl-4 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
@@ -261,41 +313,73 @@ export default function ProductsManager() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Cargar de Imagen</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormData({ ...formData, image: file, imagePreview: reader.result });
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 "
-                  />
-                  <div className="w-full h-48 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-all">
-                    {formData.imagePreview ? (
-                      <img 
-                        src={formData.imagePreview} 
-                        alt="Preview" 
-                        className="h-full w-full object-contain rounded-xl"
-                      />
-                    ) : (
-                      <div className="text-center px-4">
-                        <div className="text-gray-500">
-                          <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                          <p className="mt-1">Haz clic para seleccionar una imagen</p>
-                          <p className="text-sm text-gray-400">PNG y JPG 2MB</p>
+                <label className="block text-gray-700 mb-2">Cargar Imágenes (3-5)</label>
+
+                <div className="w-full min-h-48 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-4 hover:bg-gray-100 transition-all">
+                  {formData.imagePreviews && formData.imagePreviews.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-3">
+                      {formData.imagePreviews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={preview}
+                            alt={`Preview ${index + 1}`}
+                            className="h-28 w-full object-cover rounded-lg shadow-sm border border-gray-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveImage(index);
+                            }}
+                            className="absolute top-1 right-1 bg-white text-gray-700 rounded-full p-1 shadow-md hover:bg-red-500 hover:text-white transition z-20"
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      ))}
+
+                      {/* Botón de agregar imágenes adicionales */}
+                      {formData.imagePreviews.length < 5 && (
+                        <label className="flex flex-col items-center justify-center h-28 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => handleImageUpload(e, formData, setFormData)}
+                            className="hidden"
+                          />
+                          <PlusIcon className="w-6 h-6 text-gray-500" />
+                          <span className="text-xs text-gray-400">Agregar</span>
+                        </label>
+                      )}
+                    </div>
+                  ) : (
+                    // Si no hay imágenes aún
+                    <label className="flex flex-col items-center justify-center h-48 cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => handleImageUpload(e, formData, setFormData)}
+                        className="hidden"
+                      />
+                      <svg
+                        className="mx-auto h-12 w-12 text-gray-400"
+                        stroke="currentColor"
+                        fill="none"
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <p className="mt-1 text-gray-500">Haz clic o arrastra para agregar imágenes</p>
+                      <p className="text-sm text-gray-400">Entre 3 y 5 imágenes — PNG o JPG</p>
+                    </label>
+                  )}
                 </div>
               </div>
               <div className="flex gap-4">

@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::withCount('products')->get();
         return response()->json($categories);
     }
 
@@ -37,7 +37,7 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $category = Category::findOrFail($id);
-        
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255|unique:categories,name,' . $id,
             'description' => 'nullable|string',
