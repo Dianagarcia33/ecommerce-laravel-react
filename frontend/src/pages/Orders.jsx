@@ -5,18 +5,22 @@ import api from '../services/api';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Esperar a que termine de cargar el estado de autenticación
+    if (authLoading) return;
+    
+    // Si no hay usuario después de cargar, redirigir al login
     if (!user) {
       navigate('/login');
       return;
     }
     
     fetchOrders();
-  }, [user]);
+  }, [user, authLoading, navigate]);
 
   const fetchOrders = async () => {
     try {
@@ -25,7 +29,7 @@ export default function Orders() {
     } catch (error) {
       console.error('Error al cargar órdenes:', error);
     } finally {
-      setLoading(false);
+      setLoadingOrders(false);
     }
   };
 
@@ -49,10 +53,16 @@ export default function Orders() {
     return texts[status] || status;
   };
 
-  if (loading) {
+  // Mostrar loading mientras se verifica la autenticación o se cargan las órdenes
+  if (authLoading || loadingOrders) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Cargando órdenes...</div>
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500 mb-4"></div>
+          <p className="text-gray-600 text-lg">
+            {authLoading ? 'Verificando sesión...' : 'Cargando órdenes...'}
+          </p>
+        </div>
       </div>
     );
   }

@@ -7,7 +7,7 @@ import api from '../services/api';
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, getTotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -18,6 +18,18 @@ export default function Checkout() {
     shipping_address: '',
     notes: ''
   });
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500 mb-4"></div>
+          <p className="text-gray-600 text-lg">Verificando sesión...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     navigate('/login');
