@@ -17,6 +17,13 @@ class ProductController extends Controller
         }
 
         $products = $query->get();
+
+        $products->each(function($product) {
+            $product->images->each(function($image) {
+                $image->image_url = url($image->image_url);
+            });
+        });
+
         return response()->json($products);
 
     }
@@ -45,7 +52,7 @@ class ProductController extends Controller
             $cleanName = strtolower(trim($cleanName, '_'));
             $filename = $cleanName . '_' . time() . '.' . $extension;
 
-            $path = $image->storeAs('products', $filename, 'public');
+            $path = $image->storeAs('/products', $filename, 'public');
 
             $product->images()->create([
                 'image_url' => $path,
@@ -59,7 +66,13 @@ class ProductController extends Controller
 
     public function show(string $id)
     {
-        $product = Product::with('category')->findOrFail($id);
+        $product = Product::with(['category', 'images'])->findOrFail($id);
+
+        // Agregar "storage/" automáticamente a las URLs de las imágenes
+        $product->images->each(function($image) {
+            $image->image_url = url('storage/' . str_replace('public/', '', $image->image_url));
+        });
+
         return response()->json($product);
     }
 
