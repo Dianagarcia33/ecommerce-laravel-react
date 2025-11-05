@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useSiteConfig } from '../hooks/useSiteConfig'
-import { 
-  ShoppingCartIcon, 
-  FunnelIcon, 
+import {
+  ShoppingCartIcon,
+  FunnelIcon,
   MagnifyingGlassIcon,
   SparklesIcon,
   TagIcon
@@ -44,7 +44,7 @@ export default function Products() {
   const fetchProducts = async () => {
     try {
       setLoading(true)
-      const url = selectedCategory 
+      const url = selectedCategory
         ? `/products?category=${selectedCategory}`
         : '/products'
       const response = await api.get(url)
@@ -67,7 +67,7 @@ export default function Products() {
       button.innerHTML = '<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>Agregar'
       button.classList.remove('bg-green-500')
     }, 2000)
-  }
+  } 
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -92,7 +92,7 @@ export default function Products() {
             style={{ backgroundColor: colors.primary.hex }}
           ></div>
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div 
             className="inline-flex items-center rounded-full px-4 py-2 mb-6 shadow-lg text-gray-900 font-bold"
@@ -224,10 +224,10 @@ export default function Products() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product, index) => (
-              <div 
-                key={product.id} 
+              <div
+                key={product.id}
                 className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
-                style={{ 
+                style={{
                   animation: `fadeInUp 0.5s ease-out ${index * 0.1}s backwards`
                 }}
               >
@@ -235,13 +235,18 @@ export default function Products() {
                 <div className="relative overflow-hidden bg-gray-100">
                   <Link to={`/product/${product.id}/parallax`}>
                     <img
-                      src={product.image || 'https://via.placeholder.com/300'}
+                      src={
+                        product.images?.[0]?.image_url?.replace(
+                          'http://localhost:8000/products/',
+                          'http://localhost:8000/storage/products/'
+                        ) || 'https://placehold.co/300x300?text=Sin+imagen'
+                      }
                       alt={product.name}
                       className="w-full h-56 object-cover transform group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </Link>
-                  
+
                   {/* Badge de stock */}
                   {product.stock < 10 && product.stock > 0 && (
                     <div className="absolute top-3 right-3 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
@@ -266,11 +271,11 @@ export default function Products() {
                       {product.name}
                     </h3>
                   </Link>
-                  
+
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[40px]">
                     {product.description}
                   </p>
-                  
+
                   {/* Precio y botón */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div>
@@ -289,8 +294,7 @@ export default function Products() {
                     <button
                       onClick={() => handleAddToCart(product)}
                       disabled={product.stock === 0}
-                      className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${
-                        product.stock === 0
+                      className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${product.stock === 0
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                           : 'text-white hover:shadow-lg'
                       }`}

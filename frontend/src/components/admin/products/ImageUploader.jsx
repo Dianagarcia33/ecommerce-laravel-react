@@ -64,11 +64,22 @@ export default function ImageUploader({ images, imagePreviews, onChange }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
             {imagePreviews.map((preview, index) => (
               <div key={index} className="relative group">
-                <img
-                  src={preview}
-                  alt={`Preview ${index + 1}`}
-                  className="h-20 sm:h-28 w-full object-cover rounded-lg shadow-sm border border-gray-200 group-hover:opacity-90 transition-opacity"
-                />
+                <div
+                  className={`relative rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-blue-500' : 'border-transparent'
+                    } transition-all`}
+                >
+                  <img
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="h-20 sm:h-28 w-full object-cover rounded-md shadow-sm"
+                  />
+
+                  {index === 0 && (
+                    <span className="absolute top-1 left-1 bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-md shadow-sm">
+                      Principal
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={(e) => {

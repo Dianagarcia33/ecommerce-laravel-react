@@ -194,7 +194,12 @@ export default function Checkout() {
               {cart.map((item) => (
                 <div key={item.id} className="flex items-center gap-4 pb-4 border-b border-gray-100 hover:bg-gray-50 rounded-lg transition-colors p-3">
                   <img
-                    src={item.image}
+                    src={
+                        item.images?.[0]?.image_url?.replace(
+                          'http://localhost:8000/products/',
+                          'http://localhost:8000/storage/products/'
+                        ) || 'https://placehold.co/300x300?text=Sin+imagen'
+                      }
                     alt={item.name}
                     className="w-20 h-20 object-cover rounded-xl shadow-md"
                   />
