@@ -14,6 +14,11 @@ import Register from './pages/Register'
 import Dashboard from './pages/admin/Dashboard'
 import ProductsManager from './pages/admin/ProductsManager'
 import CategoriesManager from './pages/admin/CategoriesManager'
+import SiteSettings from './pages/admin/SiteSettings'
+import HomeEditor from './pages/admin/HomeEditor'
+import UsersManager from './pages/admin/UsersManager'
+import EmailTemplates from './pages/admin/EmailTemplates'
+import NewsletterManager from './pages/admin/NewsletterManager'
 import Orders from './pages/Orders'
 
 function App() {
@@ -36,6 +41,11 @@ function App() {
               <Route path="admin" element={<Dashboard />} />
               <Route path="admin/products" element={<ProductsManager />} />
               <Route path="admin/categories" element={<CategoriesManager />} />
+              <Route path="admin/settings" element={<SiteSettings />} />
+              <Route path="admin/home-editor" element={<HomeEditor />} />
+              <Route path="admin/users" element={<UsersManager />} />
+              <Route path="admin/email-templates" element={<EmailTemplates />} />
+              <Route path="admin/newsletter" element={<NewsletterManager />} />
             </Route>
           </Routes>
         </BrowserRouter>

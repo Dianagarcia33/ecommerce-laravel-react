@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 import logoGlointPlace from '../assets/logos/logo.png';
 import { useState, useEffect } from 'react'
 import {
@@ -23,6 +24,11 @@ export default function Layout() {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  
+  // Obtener configuración del sitio (se actualiza automáticamente)
+  const config = useSiteConfig()
+  const { business, theme } = config
+  const { colors } = theme
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,14 +62,30 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-0 group">
-              <div className="relative transition duration-300 transform">
-                <div className="absolute inset-0 bg-gradient-to-r rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+            <Link to="/" className="flex items-center group">
+              <div className="relative transition duration-300 transform group-hover:scale-105">
+                {/* Sombra del logo (configurable desde CMS) */}
+                {config.assets?.logoShadow?.blur !== 'none' && (
+                  <div 
+                    className={`absolute inset-0 rounded-xl blur-${config.assets?.logoShadow?.blur || 'sm'} transition-opacity`}
+                    style={{ 
+                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                      opacity: `${(config.assets?.logoShadow?.opacity || 30) / 100}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = Math.min((config.assets?.logoShadow?.opacity || 30) / 100 + 0.2, 1);
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = (config.assets?.logoShadow?.opacity || 30) / 100;
+                    }}
+                  ></div>
+                )}
 
                 <img
-                  src={logoGlointPlace}
-                  alt="Logo de Gloin Place"
-                  className="h-35 w-auto object-contain"
+                  src={business.logo || logoGlointPlace}
+                  alt={`Logo de ${business.name}`}
+                  className="w-auto object-contain relative z-10"
+                  style={{ height: `${config.assets?.logoSize || 56}px` }}
                 />
               </div>
             </Link>
@@ -75,16 +97,35 @@ export default function Layout() {
                   key={link.to}
                   to={link.to}
                   className={`relative px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 group ${isActive(link.to)
-                    ? 'text-cyan-600'
-                    : 'text-gray-700 hover:text-cyan-600'
+                    ? ''
+                    : 'text-gray-700'
                     }`}
+                  style={isActive(link.to) ? { color: colors.primary.hex } : {}}
+                  onMouseEnter={(e) => {
+                    if (!isActive(link.to)) {
+                      e.currentTarget.style.color = colors.primary.hex
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive(link.to)) {
+                      e.currentTarget.style.color = ''
+                    }
+                  }}
                 >
                   <link.icon className="h-5 w-5" />
                   <span>{link.label}</span>
                   {isActive(link.to) && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-full"></span>
+                    <span 
+                      className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                      style={{ 
+                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`
+                      }}
+                    ></span>
                   )}
-                  <span className="absolute inset-0 bg-cyan-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300 -z-10"></span>
+                  <span 
+                    className="absolute inset-0 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300 -z-10"
+                    style={{ backgroundColor: `${colors.primary.hex}10` }}
+                  ></span>
                 </Link>
               ))}
             </nav>
@@ -96,10 +137,25 @@ export default function Layout() {
                 to="/cart"
                 className="relative group"
               >
-                <div className="relative p-2 rounded-full hover:bg-cyan-50 transition-colors">
-                  <ShoppingCartIcon className="h-6 w-6 text-gray-700 group-hover:text-cyan-600 transition-colors" />
+                <div 
+                  className="relative p-2 rounded-full transition-colors"
+                  style={{ 
+                    '--hover-bg': `${colors.primary.hex}10`
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${colors.primary.hex}10`}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <ShoppingCartIcon 
+                    className="h-6 w-6 text-gray-700 transition-colors" 
+                    style={{ color: scrolled ? colors.primary.hex : '' }}
+                  />
                   {getItemCount() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-lime-400 to-green-500 text-gray-900 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg">
+                    <span 
+                      className="absolute -top-1 -right-1 text-gray-900 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg"
+                      style={{ 
+                        background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.secondary.dark})`
+                      }}
+                    >
                       {getItemCount()}
                     </span>
                   )}
@@ -250,8 +306,14 @@ export default function Layout() {
       <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
         {/* Decorative Elements */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-lime-500 rounded-full blur-3xl"></div>
+          <div 
+            className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            style={{ backgroundColor: colors.primary.hex }}
+          ></div>
+          <div 
+            className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl"
+            style={{ backgroundColor: colors.secondary.hex }}
+          ></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -260,54 +322,101 @@ export default function Layout() {
             {/* Brand Section */}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="bg-gradient-to-br from-cyan-400 to-cyan-600 p-2.5 rounded-xl shadow-lg">
+                <div 
+                  className="p-2.5 rounded-xl shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(to bottom right, ${colors.primary.hex}, ${colors.primary.dark})`
+                  }}
+                >
                   <ShoppingCartIcon className="h-6 w-6 text-gray-900" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    TiendaOnline
+                    {business.name}
                   </h3>
-                  <p className="text-xs text-gray-400">Tu tienda favorita</p>
+                  <p className="text-xs text-gray-400">{business.tagline}</p>
                 </div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Tu destino de compras online con los mejores productos y ofertas del mercado. Calidad garantizada.
+                {business.description}
               </p>
               <div className="flex space-x-3">
-                <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-cyan-500 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-                </a>
-                <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-lime-500 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" /></svg>
-                </a>
-                <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-full flex items-center justify-center transition-all hover:scale-110">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" /></svg>
-                </a>
+                {business.socialMedia?.facebook && (
+                  <a 
+                    href={business.socialMedia.facebook} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                    style={{ '--hover-color': colors.primary.hex }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary.hex}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f2937'}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                  </a>
+                )}
+                {business.socialMedia?.twitter && (
+                  <a 
+                    href={business.socialMedia.twitter} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.secondary.hex}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f2937'}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" /></svg>
+                  </a>
+                )}
+                {business.socialMedia?.instagram && (
+                  <a 
+                    href={business.socialMedia.instagram} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary.hex}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1f2937'}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" /></svg>
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Quick Links */}
             <div>
               <h4 className="text-lg font-bold mb-6 flex items-center">
-                <span className="w-1 h-6 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-full mr-3"></span>
+                <span 
+                  className="w-1 h-6 rounded-full mr-3"
+                  style={{ 
+                    background: `linear-gradient(to bottom, ${colors.primary.hex}, ${colors.primary.dark})`
+                  }}
+                ></span>
                 Enlaces Rápidos
               </h4>
               <ul className="space-y-3">
                 <li>
                   <Link to="/" className="text-gray-400 hover:text-white transition-colors flex items-center group">
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-cyan-400 mr-0 group-hover:mr-2 transition-all"></span>
+                    <span 
+                      className="w-0 group-hover:w-2 h-0.5 mr-0 group-hover:mr-2 transition-all"
+                      style={{ backgroundColor: colors.primary.hex }}
+                    ></span>
                     Inicio
                   </Link>
                 </li>
                 <li>
                   <Link to="/products" className="text-gray-400 hover:text-white transition-colors flex items-center group">
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-cyan-400 mr-0 group-hover:mr-2 transition-all"></span>
+                    <span 
+                      className="w-0 group-hover:w-2 h-0.5 mr-0 group-hover:mr-2 transition-all"
+                      style={{ backgroundColor: colors.primary.hex }}
+                    ></span>
                     Productos
                   </Link>
                 </li>
                 <li>
                   <Link to="/orders" className="text-gray-400 hover:text-white transition-colors flex items-center group">
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-cyan-400 mr-0 group-hover:mr-2 transition-all"></span>
+                    <span 
+                      className="w-0 group-hover:w-2 h-0.5 mr-0 group-hover:mr-2 transition-all"
+                      style={{ backgroundColor: colors.primary.hex }}
+                    ></span>
                     Mis Órdenes
                   </Link>
                 </li>
@@ -317,7 +426,12 @@ export default function Layout() {
             {/* Information */}
             <div>
               <h4 className="text-lg font-bold mb-6 flex items-center">
-                <span className="w-1 h-6 bg-gradient-to-b from-lime-400 to-green-500 rounded-full mr-3"></span>
+                <span 
+                  className="w-1 h-6 rounded-full mr-3"
+                  style={{ 
+                    background: `linear-gradient(to bottom, ${colors.secondary.hex}, ${colors.secondary.dark})`
+                  }}
+                ></span>
                 Información
               </h4>
               <ul className="space-y-3">

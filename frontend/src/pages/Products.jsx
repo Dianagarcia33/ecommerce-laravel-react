@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 import { 
   ShoppingCartIcon, 
   FunnelIcon, 
@@ -20,6 +21,11 @@ export default function Products() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const { addToCart } = useCart()
+  
+  // Obtener configuración del sitio
+  const config = useSiteConfig()
+  const { theme } = config
+  const { colors } = theme
 
   useEffect(() => {
     fetchCategories()
@@ -70,14 +76,28 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header */}
-      <section className="relative bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900 text-white py-20 overflow-hidden">
+      <section 
+        className="relative text-white py-20 overflow-hidden"
+        style={{ 
+          background: `linear-gradient(135deg, #0f172a 0%, ${colors.primary.dark} 50%, ${colors.secondary.dark} 100%)`
+        }}
+      >
         <div className="absolute inset-0 opacity-15">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-lime-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-400 rounded-full blur-3xl"></div>
+          <div 
+            className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl"
+            style={{ backgroundColor: colors.secondary.hex }}
+          ></div>
+          <div 
+            className="absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            style={{ backgroundColor: colors.primary.hex }}
+          ></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center bg-gradient-to-r from-cyan-400 to-lime-400 rounded-full px-4 py-2 mb-6 shadow-lg text-gray-900 font-bold">
+          <div 
+            className="inline-flex items-center rounded-full px-4 py-2 mb-6 shadow-lg text-gray-900 font-bold"
+            style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+          >
             <SparklesIcon className="w-5 h-5 mr-2" />
             <span className="text-sm">Catálogo Completo</span>
           </div>
@@ -103,7 +123,19 @@ export default function Products() {
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-2 focus:ring-cyan-200 transition-all outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl transition-all outline-none"
+              style={{
+                '--focus-border': colors.primary.hex,
+                '--focus-ring': `${colors.primary.hex}40`
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = colors.primary.hex
+                e.target.style.boxShadow = `0 0 0 3px ${colors.primary.hex}40`
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#e5e7eb'
+                e.target.style.boxShadow = 'none'
+              }}
             />
           </div>
 
@@ -118,9 +150,22 @@ export default function Products() {
                 onClick={() => setSelectedCategory(null)}
                 className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                   !selectedCategory
-                    ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
+                    ? 'text-white shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-200'
                 }`}
+                style={!selectedCategory ? { 
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`
+                } : {}}
+                onMouseEnter={(e) => {
+                  if (selectedCategory) {
+                    e.target.style.borderColor = colors.primary.hex
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory) {
+                    e.target.style.borderColor = '#e5e7eb'
+                  }
+                }}
               >
                 Todos
               </button>
@@ -130,9 +175,22 @@ export default function Products() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
                     selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-cyan-300'
+                      ? 'text-white shadow-lg'
+                      : 'bg-white text-gray-700 border-2 border-gray-200'
                   }`}
+                  style={selectedCategory === category.id ? { 
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`
+                  } : {}}
+                  onMouseEnter={(e) => {
+                    if (selectedCategory !== category.id) {
+                      e.target.style.borderColor = colors.primary.hex
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedCategory !== category.id) {
+                      e.target.style.borderColor = '#e5e7eb'
+                    }
+                  }}
                 >
                   {category.name}
                 </button>
@@ -144,7 +202,10 @@ export default function Products() {
         {/* Grid de productos */}
         {loading ? (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+            <div 
+              className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4"
+              style={{ borderTopColor: colors.primary.hex, borderBottomColor: colors.primary.hex }}
+            ></div>
             <p className="text-gray-600 mt-4 font-medium">Cargando productos...</p>
           </div>
         ) : error ? (
@@ -197,7 +258,11 @@ export default function Products() {
                 {/* Contenido */}
                 <div className="p-5">
                   <Link to={`/product/${product.id}/parallax`}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2 min-h-[56px]">
+                    <h3 
+                      className="text-lg font-bold text-gray-900 mb-2 transition-colors line-clamp-2 min-h-[56px]"
+                      onMouseEnter={(e) => e.target.style.color = colors.primary.hex}
+                      onMouseLeave={(e) => e.target.style.color = '#111827'}
+                    >
                       {product.name}
                     </h3>
                   </Link>
@@ -209,7 +274,15 @@ export default function Products() {
                   {/* Precio y botón */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div>
-                      <span className="text-3xl font-extrabold bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">
+                      <span 
+                        className="text-3xl font-extrabold"
+                        style={{ 
+                          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text'
+                        }}
+                      >
                         ${product.price}
                       </span>
                     </div>
@@ -219,8 +292,21 @@ export default function Products() {
                       className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${
                         product.stock === 0
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-lime-500 to-green-500 text-white hover:shadow-lg hover:from-lime-300 hover:to-green-400'
+                          : 'text-white hover:shadow-lg'
                       }`}
+                      style={product.stock > 0 ? { 
+                        background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.secondary.dark})`
+                      } : {}}
+                      onMouseEnter={(e) => {
+                        if (product.stock > 0) {
+                          e.target.style.opacity = '0.9'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (product.stock > 0) {
+                          e.target.style.opacity = '1'
+                        }
+                      }}
                     >
                       <ShoppingCartIcon className="w-5 h-5" />
                       <span className="hidden sm:inline">Agregar</span>
