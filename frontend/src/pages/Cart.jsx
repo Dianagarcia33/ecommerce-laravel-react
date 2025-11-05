@@ -85,7 +85,12 @@ export default function Cart() {
                   {/* Image */}
                   <div className="relative group">
                     <img 
-                      src={item.image || 'https://via.placeholder.com/150'} 
+                      src={
+                        item.images?.[0]?.image_url?.replace(
+                          'http://localhost:8000/products/',
+                          'http://localhost:8000/storage/products/'
+                        ) || 'https://placehold.co/300x300?text=Sin+imagen'
+                      }
                       alt={item.name} 
                       className="w-32 h-32 object-cover rounded-xl group-hover:scale-105 transition-transform duration-300" 
                     />

@@ -9,9 +9,14 @@ export default function ProductRow({ product, onEdit, onDelete, isLoading }) {
     <tr className="hover:bg-gray-50 transition">
       <td className="px-6 py-4 whitespace-nowrap">
         <img 
-          src={product.image || 'https://via.placeholder.com/50'} 
+          src={
+              product.images?.[0]?.image_url?.replace(
+                'http://localhost:8000/products/',
+                'http://localhost:8000/storage/products/'
+              ) || 'https://placehold.co/300x300?text=Sin+imagen'
+           }
           alt={product.name} 
-          className="h-12 w-12 object-cover rounded-lg shadow-sm" 
+          className="h-12 w-12 object-cover rounded-lg shadow-sm"
         />
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
