@@ -18,14 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear usuario de prueba
-           User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@tienda.com',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-        ]);
-
+        // 1. Crear usuario administrador
+        $this->call(AdminUserSeeder::class);
 
         // Crear categorías
         $electronica = Category::create([
@@ -130,7 +124,13 @@ class DatabaseSeeder extends Seeder
             'stock' => 20,
         ]);
 
-        // Crear imágenes para productos
+        // 2. Crear imágenes para productos
         $this->call(ProductImagesSeeder::class);
+
+        // 3. Crear datos de prueba del dashboard
+        $this->call(DashboardTestDataSeeder::class);
+
+        // 4. Crear plantillas de email
+        $this->call(EmailTemplateSeeder::class);
     }
 }
