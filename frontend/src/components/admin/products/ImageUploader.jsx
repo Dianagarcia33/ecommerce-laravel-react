@@ -5,7 +5,7 @@ import { PRODUCT_CONFIG } from '../../../constants/product.constants';
 /**
  * Image uploader component for product images
  */
-export default function ImageUploader({ images, imagePreviews, onChange }) {
+export default function ImageUploader({ images, imagePreviews, onChange, existingImagesCount = 0 }) {
   const [uploadError, setUploadError] = useState(null);
 
   const handleImageUpload = useCallback((e) => {
@@ -41,11 +41,23 @@ export default function ImageUploader({ images, imagePreviews, onChange }) {
   }, [images, imagePreviews, onChange]);
 
   const handleRemoveImage = useCallback((index) => {
-    onChange({
-      images: images.filter((_, i) => i !== index),
-      imagePreviews: imagePreviews.filter((_, i) => i !== index)
-    });
-  }, [images, imagePreviews, onChange]);
+    // Si el índice es menor que existingImagesCount, es una imagen existente
+    if (index < existingImagesCount) {
+      // Eliminar imagen existente
+      onChange({
+        images: images,
+        imagePreviews: imagePreviews,
+        deletedExistingIndex: index
+      });
+    } else {
+      // Eliminar imagen nueva (aún no guardada)
+      const newImageIndex = index - existingImagesCount;
+      onChange({
+        images: images.filter((_, i) => i !== newImageIndex),
+        imagePreviews: imagePreviews.filter((_, i) => i !== index)
+      });
+    }
+  }, [images, imagePreviews, onChange, existingImagesCount]);
 
   return (
     <div className="mb-4">

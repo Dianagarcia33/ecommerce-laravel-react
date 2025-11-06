@@ -9,26 +9,15 @@ import {
   BoltIcon,
   FireIcon,
   TagIcon,
-  StarIcon,
-  HeartIcon,
-  ClockIcon,
-  TrophyIcon,
-  RocketLaunchIcon,
-  GiftIcon,
-  CubeIcon,
-  DevicePhoneMobileIcon,
-  ComputerDesktopIcon,
-  HomeIcon as HomeIconOutline
+  StarIcon
 } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { useSiteConfig } from '../hooks/useSiteConfig'
-import api from '../services/api'
+import productService from '../services/productService'
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0)
-  const [allProducts, setAllProducts] = useState([])
+  const [featuredProducts, setFeaturedProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [favorites, setFavorites] = useState([])
   
   const config = useSiteConfig()
   const { home, business, theme } = config
@@ -43,30 +32,14 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get('/products')
-      setAllProducts(response.data)
-      // Simular favoritos (primeros 4 productos)
-      setFavorites(response.data.slice(0, 4).map(p => p.id))
+      const response = await productService.getAll()
+      setFeaturedProducts(response.data.slice(0, 6))
     } catch (error) {
       console.error('Error al cargar productos:', error)
     } finally {
       setLoading(false)
     }
   }
-
-  const toggleFavorite = (productId) => {
-    setFavorites(prev => 
-      prev.includes(productId) 
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    )
-  }
-
-  // Dividir productos en diferentes secciones
-  const featuredProducts = allProducts.slice(0, 6)
-  const trendingProducts = allProducts.slice(3, 7)
-  const favoriteProducts = allProducts.filter(p => favorites.includes(p.id))
-  const recentProducts = allProducts.slice(0, 4)
 
   const features = [
     {
@@ -88,86 +61,6 @@ export default function Home() {
       gradient: 'from-orange-500 to-orange-600'
     }
   ]
-
-  const categories = [
-    { icon: ComputerDesktopIcon, name: 'Electrónica', count: 24, color: 'from-blue-500 to-cyan-500' },
-    { icon: DevicePhoneMobileIcon, name: 'Móviles', count: 18, color: 'from-purple-500 to-pink-500' },
-    { icon: HomeIconOutline, name: 'Hogar', count: 32, color: 'from-green-500 to-emerald-500' },
-    { icon: GiftIcon, name: 'Regalos', count: 15, color: 'from-orange-500 to-red-500' },
-  ]
-
-  // Componente reutilizable para productos
-  const ProductCard = ({ product, showFavorite = false }) => (
-    <div className="group relative">
-      <div className="relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2">
-        {/* Imagen del producto */}
-        <div className="aspect-square overflow-hidden bg-gray-50 relative">
-          <img
-            src={product.images?.[0]?.image_url || 'https://via.placeholder.com/400'}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          />
-          
-          {/* Botón de favorito */}
-          {showFavorite && (
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                toggleFavorite(product.id)
-              }}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10"
-            >
-              {favorites.includes(product.id) ? (
-                <HeartIconSolid className="w-6 h-6 text-red-500" />
-              ) : (
-                <HeartIcon className="w-6 h-6 text-gray-600" />
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* Badge de nuevo */}
-        {product.stock > 0 && (
-          <div 
-            className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg"
-            style={{ background: colors.secondary.hex }}
-          >
-            NUEVO
-          </div>
-        )}
-
-        {/* Contenido */}
-        <div className="p-6 space-y-3">
-          <h3 className="font-bold text-lg text-gray-900 transition-all line-clamp-2">
-            {product.name}
-          </h3>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <div 
-                className="text-2xl font-black"
-                style={{ color: colors.primary.hex }}
-              >
-                ${parseFloat(product.price).toFixed(2)}
-              </div>
-              {product.stock < 10 && product.stock > 0 && (
-                <div className="text-xs text-orange-600 font-medium">
-                  ¡Solo {product.stock} disponibles!
-                </div>
-              )}
-            </div>
-            
-            <button 
-              className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform"
-              style={{ background: colors.primary.hex }}
-            >
-              <ShoppingBagIcon className="w-6 h-6 text-white" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -285,47 +178,27 @@ export default function Home() {
               <div className="relative z-10">
                 {/* Grid de productos destacados mini */}
                 <div className="grid grid-cols-2 gap-4">
-                  {loading ? (
-                    // Skeleton loading
-                    [1, 2, 3, 4].map((item) => (
-                      <div
-                        key={item}
-                        className="aspect-square rounded-3xl bg-gray-200 animate-pulse"
-                      />
-                    ))
-                  ) : (
-                    // Productos reales
-                    featuredProducts.slice(0, 4).map((product, index) => (
-                      <Link
-                        key={product.id}
-                        to={`/products`}
-                        className="group aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300 relative"
-                        style={{ 
-                          animationDelay: `${index * 0.1}s`
-                        }}
-                      >
-                        {/* Imagen del producto */}
-                        <img
-                          src={product.images?.[0]?.image_url || 'https://via.placeholder.com/400'}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
+                  {[1, 2, 3, 4].map((item, index) => (
+                    <div
+                      key={item}
+                      className="aspect-square rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${
+                          index % 2 === 0 ? colors.primary.hex : colors.secondary.hex
+                        }20, ${
+                          index % 2 === 0 ? colors.secondary.hex : colors.primary.hex
+                        }40)`,
+                        animationDelay: `${index * 0.1}s`
+                      }}
+                    >
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBagIcon 
+                          className="w-20 h-20 opacity-30"
+                          style={{ color: index % 2 === 0 ? colors.primary.hex : colors.secondary.hex }}
                         />
-                        
-                        {/* Overlay con info en hover */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                          <h4 className="text-white font-bold text-sm line-clamp-2">
-                            {product.name}
-                          </h4>
-                          <p 
-                            className="text-lg font-black mt-1"
-                            style={{ color: colors.secondary.hex }}
-                          >
-                            ${parseFloat(product.price).toFixed(2)}
-                          </p>
-                        </div>
-                      </Link>
-                    ))
-                  )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -386,97 +259,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categorías Destacadas */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4">
-              Explora por Categoría
-            </h2>
-            <p className="text-gray-600">Encuentra exactamente lo que buscas</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                to="/products"
-                className="group relative overflow-hidden rounded-2xl p-8 bg-gradient-to-br hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary.hex}10, ${colors.secondary.hex}10)`
-                }}
-              >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div 
-                    className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${category.color} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}
-                  >
-                    <category.icon className="w-10 h-10 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-lg">{category.name}</h3>
-                    <p className="text-sm text-gray-600">{category.count} productos</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Banner de Oferta Especial */}
-      <section className="py-4 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div 
-            className="relative overflow-hidden rounded-3xl p-12 shadow-2xl"
-            style={{
-              background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})`
-            }}
-          >
-            <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
-              <div className="text-white space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-sm font-bold">
-                  <BoltIcon className="w-5 h-5" />
-                  Oferta Limitada
-                </div>
-                <h2 className="text-4xl lg:text-5xl font-black">
-                  ¡Hasta 50% OFF!
-                </h2>
-                <p className="text-xl text-white/90">
-                  En productos seleccionados. No te pierdas esta oportunidad única.
-                </p>
-                <div className="flex items-center gap-4 pt-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-black">23</div>
-                    <div className="text-sm text-white/70">Horas</div>
-                  </div>
-                  <div className="text-3xl">:</div>
-                  <div className="text-center">
-                    <div className="text-3xl font-black">45</div>
-                    <div className="text-sm text-white/70">Minutos</div>
-                  </div>
-                  <div className="text-3xl">:</div>
-                  <div className="text-center">
-                    <div className="text-3xl font-black">12</div>
-                    <div className="text-sm text-white/70">Segundos</div>
-                  </div>
-                </div>
-                <Link
-                  to="/products"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold bg-white text-gray-900 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
-                >
-                  Ver Ofertas
-                  <ArrowRightIcon className="w-5 h-5" />
-                </Link>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl" />
-                <FireIcon className="w-64 h-64 text-white/20 mx-auto" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Productos Destacados */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -532,7 +314,10 @@ export default function Home() {
                     {/* Imagen del producto */}
                     <div className="aspect-square overflow-hidden bg-gray-50">
                       <img
-                        src={product.images?.[0]?.image_url || 'https://via.placeholder.com/400'}
+                        src={product.images?.[0] 
+                          ? `http://localhost:8000/storage/${product.images[0].image_path}`
+                          : 'https://via.placeholder.com/400'
+                        }
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
@@ -550,7 +335,11 @@ export default function Home() {
 
                     {/* Contenido */}
                     <div className="p-6 space-y-3">
-                      <h3 className="font-bold text-lg text-gray-900 transition-all">
+                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all"
+                        style={{ 
+                          backgroundImage: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
+                        }}
+                      >
                         {product.name}
                       </h3>
                       

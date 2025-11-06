@@ -29,6 +29,87 @@ export default function Layout() {
   const config = useSiteConfig()
   const { business, theme } = config
   const { colors } = theme
+  
+  // Configuración de navbar con valores por defecto
+  const navbar = theme.navbar || {
+    background: 'dark',
+    backgroundColor: '#0f172a',
+    textColor: '#ffffff',
+    blur: true,
+    shadow: 'medium',
+    borderBottom: false
+  }
+  
+  // Debug: ver configuración de navbar
+  useEffect(() => {
+    console.log('Layout - Navbar config:', navbar)
+  }, [navbar])
+
+  // Función para obtener las clases de fondo de la navbar
+  const getNavbarBackgroundClasses = () => {
+    const base = scrolled && navbar.blur ? 'backdrop-blur-lg' : ''
+    
+    switch (navbar.background) {
+      case 'transparent':
+        return `${base} bg-transparent`
+      case 'primary':
+        return `${base} ${scrolled ? 'bg-white/80' : ''}`
+      case 'dark':
+        return `${base} bg-slate-900 ${scrolled ? 'bg-slate-900/95' : ''}`
+      case 'gradient':
+        return `${base}`
+      case 'white':
+      default:
+        return `${base} ${scrolled ? 'bg-white/80' : 'bg-white'}`
+    }
+  }
+
+  // Función para obtener el estilo inline del fondo
+  const getNavbarBackgroundStyle = () => {
+    if (navbar.background === 'gradient') {
+      return {
+        background: scrolled && navbar.blur
+          ? `linear-gradient(to right, ${colors.primary.hex}f0, ${colors.secondary.hex}f0)`
+          : `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`
+      }
+    }
+    if (navbar.background === 'primary' && !scrolled) {
+      return {
+        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`
+      }
+    }
+    return {}
+  }
+
+  // Función para obtener las clases de sombra
+  const getNavbarShadowClass = () => {
+    if (!scrolled && navbar.shadow === 'none') return ''
+    
+    switch (navbar.shadow) {
+      case 'none': return ''
+      case 'small': return 'shadow'
+      case 'large': return 'shadow-2xl'
+      case 'medium':
+      default: return 'shadow-lg'
+    }
+  }
+
+  // Función para obtener el color del texto
+  const getTextColorClass = () => {
+    if (navbar.background === 'dark' || navbar.background === 'gradient') {
+      return 'text-white'
+    }
+    
+    switch (navbar.textColor) {
+      case 'light': return 'text-white'
+      case 'primary': return 'text-gray-800'
+      case 'dark':
+      default: return 'text-gray-700'
+    }
+  }
+
+  const textColorClass = getTextColorClass()
+  const isLightText = navbar.background === 'dark' || navbar.background === 'gradient' || navbar.textColor === 'light'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,38 +135,36 @@ export default function Layout() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white/80 backdrop-blur-lg shadow-lg'
-          : 'bg-white shadow-md'
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navbar.borderBottom ? 'border-b border-white/10' : ''}`}
+        style={{
+          background: scrolled && navbar.blur
+            ? `${navbar.backgroundColor}f5`
+            : navbar.backgroundColor,
+          backdropFilter: scrolled && navbar.blur ? 'blur(12px)' : 'none',
+          boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.2)' : '0 4px 15px rgba(0, 0, 0, 0.1)'
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center group">
               <div className="relative transition duration-300 transform group-hover:scale-105">
-                {/* Sombra del logo (configurable desde CMS) */}
-                {config.assets?.logoShadow?.blur !== 'none' && (
-                  <div 
-                    className={`absolute inset-0 rounded-xl blur-${config.assets?.logoShadow?.blur || 'sm'} transition-opacity`}
-                    style={{ 
-                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                      opacity: `${(config.assets?.logoShadow?.opacity || 30) / 100}`,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.opacity = Math.min((config.assets?.logoShadow?.opacity || 30) / 100 + 0.2, 1);
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.opacity = (config.assets?.logoShadow?.opacity || 30) / 100;
-                    }}
-                  ></div>
-                )}
+                {/* Resplandor sutil alrededor del logo */}
+                <div 
+                  className="absolute inset-0 rounded-xl blur-lg transition-opacity opacity-50 group-hover:opacity-70"
+                  style={{ 
+                    background: `radial-gradient(circle, ${colors.secondary.hex}40, transparent 70%)`,
+                  }}
+                ></div>
 
                 <img
                   src={business.logo || logoGlointPlace}
                   alt={`Logo de ${business.name}`}
                   className="w-auto object-contain relative z-10"
-                  style={{ height: `${config.assets?.logoSize || 56}px` }}
+                  style={{ 
+                    height: `${config.assets?.logoSize || 56}px`,
+                    filter: 'drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3)) brightness(1.1)',
+                  }}
                 />
               </div>
             </Link>
@@ -96,21 +175,9 @@ export default function Layout() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`relative px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 group ${isActive(link.to)
-                    ? ''
-                    : 'text-gray-700'
-                    }`}
-                  style={isActive(link.to) ? { color: colors.primary.hex } : {}}
-                  onMouseEnter={(e) => {
-                    if (!isActive(link.to)) {
-                      e.currentTarget.style.color = colors.primary.hex
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive(link.to)) {
-                      e.currentTarget.style.color = ''
-                    }
-                  }}
+                  className={`relative px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center space-x-2 group ${
+                    isActive(link.to) ? 'text-white' : 'text-white/80 hover:text-white'
+                  }`}
                 >
                   <link.icon className="h-5 w-5" />
                   <span>{link.label}</span>
@@ -118,13 +185,14 @@ export default function Layout() {
                     <span 
                       className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
                       style={{ 
-                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`
+                        background: colors.secondary.hex,
+                        boxShadow: `0 0 10px ${colors.secondary.hex}`
                       }}
                     ></span>
                   )}
                   <span 
                     className="absolute inset-0 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300 -z-10"
-                    style={{ backgroundColor: `${colors.primary.hex}10` }}
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
                   ></span>
                 </Link>
               ))}
@@ -146,14 +214,14 @@ export default function Layout() {
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   <ShoppingCartIcon 
-                    className="h-6 w-6 text-gray-700 transition-colors" 
-                    style={{ color: scrolled ? colors.primary.hex : '' }}
+                    className="h-6 w-6 text-white transition-colors"
                   />
                   {getItemCount() > 0 && (
                     <span 
-                      className="absolute -top-1 -right-1 text-gray-900 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg"
+                      className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg"
                       style={{ 
-                        background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.secondary.dark})`
+                        background: colors.secondary.hex,
+                        boxShadow: `0 0 15px ${colors.secondary.hex}`
                       }}
                     >
                       {getItemCount()}
@@ -165,16 +233,19 @@ export default function Layout() {
               {/* User Menu - Desktop */}
               {user ? (
                 <div className="hidden md:flex items-center space-x-3">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-full border border-cyan-200">
-                    <div className="h-8 w-8 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center shadow-md">
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    <div 
+                      className="h-8 w-8 rounded-full flex items-center justify-center shadow-md"
+                      style={{ background: colors.secondary.hex }}
+                    >
                       <span className="text-gray-900 font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>
                     </div>
-                    <span className="text-sm font-semibold text-gray-800">Hola, {user.name.split(' ')[0]}</span>
+                    <span className="text-sm font-semibold text-white">Hola, {user.name.split(' ')[0]}</span>
                   </div>
 
                   <Link
                     to="/orders"
-                    className="flex items-center space-x-1 px-4 py-2 text-gray-700 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-all border border-transparent hover:border-cyan-200"
+                    className="flex items-center space-x-1 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all border border-transparent hover:border-white/20"
                   >
                     <ClipboardDocumentListIcon className="h-5 w-5" />
                     <span className="text-sm font-medium">Órdenes</span>
@@ -182,7 +253,7 @@ export default function Layout() {
 
                   <button
                     onClick={logout}
-                    className="flex items-center space-x-1 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg transition-all font-medium border border-red-200 hover:border-red-600"
+                    className="flex items-center space-x-1 px-4 py-2 bg-red-500/90 text-white hover:bg-red-600 rounded-lg transition-all font-medium border border-red-400/50 hover:border-red-500 shadow-lg"
                   >
                     <ArrowRightOnRectangleIcon className="h-5 w-5" />
                     <span className="text-sm">Salir</span>
@@ -192,14 +263,18 @@ export default function Layout() {
                 <div className="hidden md:flex items-center space-x-2">
                   <Link
                     to="/login"
-                    className="flex items-center space-x-2 px-5 py-2.5 bg-white border-2 border-cyan-500 text-cyan-600 hover:bg-cyan-50 rounded-full transition-all font-semibold shadow-sm hover:shadow-md"
+                    className="flex items-center space-x-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 rounded-full transition-all font-semibold shadow-md hover:shadow-lg"
                   >
                     <UserIcon className="h-5 w-5" />
                     <span>Ingresar</span>
                   </Link>
                   <Link
                     to="/register"
-                    className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-cyan-400 to-cyan-600 text-white hover:from-cyan-300 hover:to-cyan-500 hover:shadow-lg hover:scale-105 rounded-full transition-all font-semibold shadow-md"
+                    className="flex items-center space-x-2 px-5 py-2.5 text-gray-900 hover:shadow-xl hover:scale-105 rounded-full transition-all font-semibold shadow-lg"
+                    style={{ 
+                      background: colors.secondary.hex,
+                      boxShadow: `0 4px 15px ${colors.secondary.hex}40`
+                    }}
                   >
                     <UserPlusIcon className="h-5 w-5" />
                     <span>Registrarse</span>
@@ -210,12 +285,12 @@ export default function Layout() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
               >
                 {mobileMenuOpen ? (
-                  <XMarkIcon className="h-6 w-6 text-gray-700" />
+                  <XMarkIcon className="h-6 w-6 text-white" />
                 ) : (
-                  <Bars3Icon className="h-6 w-6 text-gray-700" />
+                  <Bars3Icon className="h-6 w-6 text-white" />
                 )}
               </button>
             </div>
@@ -227,14 +302,20 @@ export default function Layout() {
           className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
             }`}
         >
-          <div className="px-4 pt-2 pb-6 space-y-2 bg-white/95 backdrop-blur-lg border-t border-gray-100">
+          <div 
+            className="px-4 pt-2 pb-6 space-y-2 border-t border-white/10"
+            style={{ 
+              background: `linear-gradient(to bottom, ${colors.primary.hex}, ${colors.primary.dark})`,
+              backdropFilter: 'blur(12px)'
+            }}
+          >
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive(link.to)
-                  ? 'bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 shadow-lg'
-                  : 'text-gray-700 hover:bg-cyan-50'
+                  ? 'bg-white/20 text-white shadow-lg border border-white/30'
+                  : 'text-white/80 hover:bg-white/10 hover:text-white'
                   }`}
               >
                 <link.icon className="h-5 w-5" />
@@ -242,22 +323,31 @@ export default function Layout() {
               </Link>
             ))}
 
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-white/10">
               {user ? (
                 <>
-                  <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-xl mb-2 border border-cyan-200">
-                    <div className="h-10 w-10 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center shadow-md">
+                  <div 
+                    className="flex items-center space-x-3 px-4 py-3 rounded-xl mb-2 border"
+                    style={{ 
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderColor: 'rgba(255, 255, 255, 0.2)'
+                    }}
+                  >
+                    <div 
+                      className="h-10 w-10 rounded-full flex items-center justify-center shadow-md"
+                      style={{ background: colors.secondary.hex }}
+                    >
                       <span className="text-gray-900 font-bold">{user.name.charAt(0).toUpperCase()}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-600">{user.email}</p>
+                      <p className="text-sm font-semibold text-white">{user.name}</p>
+                      <p className="text-xs text-white/70">{user.email}</p>
                     </div>
                   </div>
 
                   <Link
                     to="/orders"
-                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 rounded-xl transition-all"
+                    className="flex items-center space-x-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white rounded-xl transition-all"
                   >
                     <ClipboardDocumentListIcon className="h-5 w-5" />
                     <span className="font-medium">Mis Órdenes</span>
@@ -265,7 +355,7 @@ export default function Layout() {
 
                   <button
                     onClick={logout}
-                    className="w-full flex items-center space-x-3 px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all font-medium mt-2"
+                    className="w-full flex items-center space-x-3 px-4 py-3 bg-red-500/80 text-white hover:bg-red-600 rounded-xl transition-all font-medium mt-2 shadow-lg"
                   >
                     <ArrowRightOnRectangleIcon className="h-5 w-5" />
                     <span>Cerrar Sesión</span>
@@ -275,14 +365,15 @@ export default function Layout() {
                 <div className="space-y-2">
                   <Link
                     to="/login"
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-3 border-2 border-cyan-500 text-cyan-600 hover:bg-cyan-50 rounded-xl transition-all font-semibold"
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-3 border-2 border-white/30 text-white hover:bg-white/10 rounded-xl transition-all font-semibold"
                   >
                     <UserIcon className="h-5 w-5" />
                     <span>Ingresar</span>
                   </Link>
                   <Link
                     to="/register"
-                    className="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-gradient-to-r from-cyan-400 to-cyan-600 text-gray-900 hover:shadow-lg rounded-xl transition-all font-semibold"
+                    className="flex items-center justify-center space-x-2 w-full px-4 py-3 text-gray-900 hover:shadow-xl rounded-xl transition-all font-semibold shadow-lg"
+                    style={{ background: colors.secondary.hex }}
                   >
                     <UserPlusIcon className="h-5 w-5" />
                     <span>Registrarse</span>

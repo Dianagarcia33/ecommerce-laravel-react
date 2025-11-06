@@ -69,6 +69,11 @@ export default function ProductsManager() {
   // Get initial form data for modal
   const getInitialFormData = () => {
     if (editingProduct) {
+      // Las URLs ya vienen completas desde el backend
+      const existingImagePreviews = editingProduct.images 
+        ? editingProduct.images.map(img => img.image_url)
+        : [];
+
       return {
         name: editingProduct.name,
         description: editingProduct.description,
@@ -76,7 +81,8 @@ export default function ProductsManager() {
         stock: editingProduct.stock,
         category_id: editingProduct.category_id,
         images: [],
-        imagePreviews: []
+        imagePreviews: existingImagePreviews,
+        existingImages: editingProduct.images || [] // Guardar referencia de imágenes existentes
       };
     }
     return INITIAL_FORM_STATE;

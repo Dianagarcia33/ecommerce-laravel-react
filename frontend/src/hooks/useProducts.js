@@ -71,19 +71,43 @@ export const useProducts = () => {
 
   const updateProduct = useCallback(async (id, formData) => {
     const token = localStorage.getItem('token');
+
+    // Primero eliminar las imágenes marcadas para eliminar
+    if (formData.deletedImageIds && formData.deletedImageIds.length > 0) {
+      try {
+        for (const imageId of formData.deletedImageIds) {
+          await fetch(`${API_BASE_URL}/products/${id}/images/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json',
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error al eliminar imágenes:', error);
+      }
+    }
+
+    // Luego actualizar el producto y agregar nuevas imágenes si hay
     const form = new FormData();
+
+    // Laravel requiere _method para simular PUT cuando se envían archivos
+    form.append('_method', 'PUT');
 
     // Append product fields
     Object.keys(formData).forEach(key => {
-      if (key !== 'images' && key !== 'imagePreviews') {
+      if (key !== 'images' && key !== 'imagePreviews' && key !== 'existingImages' && key !== 'deletedImageIds') {
         form.append(key, formData[key]);
       }
     });
 
-    // Append images
-    formData.images.forEach((img) => {
-      form.append('images[]', img);
-    });
+    // Append new images (solo si hay nuevas imágenes)
+    if (formData.images && formData.images.length > 0) {
+      formData.images.forEach((img) => {
+        form.append('images[]', img);
+      });
+    }
 
     try {
       setLoading(true);

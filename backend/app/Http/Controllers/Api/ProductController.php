@@ -20,7 +20,7 @@ class ProductController extends Controller
 
         $products->each(function($product) {
             $product->images->each(function($image) {
-                $image->image_url = url($image->image_url);
+                $image->image_url = url('storage/' . $image->image_url);
             });
         });
 
@@ -61,7 +61,15 @@ class ProductController extends Controller
             ]);
         }
 
-        return response()->json($product->load('category', 'images'), 201);
+        // Recargar el producto con sus relaciones
+        $product->load(['category', 'images']);
+
+        // Transformar las URLs de las imágenes
+        $product->images->each(function($image) {
+            $image->image_url = url('storage/' . $image->image_url);
+        });
+
+        return response()->json($product, 201);
     }
 
     public function show(string $id)
@@ -70,7 +78,7 @@ class ProductController extends Controller
 
         // Agregar "storage/" automáticamente a las URLs de las imágenes
         $product->images->each(function($image) {
-            $image->image_url = url('storage/' . str_replace('public/', '', $image->image_url));
+            $image->image_url = url('storage/' . $image->image_url);
         });
 
         return response()->json($product);
@@ -86,7 +94,7 @@ class ProductController extends Controller
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'image' => 'nullable|file|image|max:2048',
+            'images.*' => 'nullable|image|max:2048',
         ]);
 
         // Generar slug si se actualiza el nombre
@@ -94,22 +102,41 @@ class ProductController extends Controller
             $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
         }
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image');
-            $originalname = $path->getClientOriginalName();
-            $extension = $path->getClientOriginalExtension();
-            $namesinextension = pathinfo($originalname, PATHINFO_FILENAME);
-            $clientname = preg_replace('/[^A-Za-z0-9\-]/', '_', $namesinextension);
-            $clientname = preg_replace('/_+/', '_', $clientname);
-            $clientname = trim($clientname, '_');
-            $clientname = strtolower($clientname);
-            $filename = $clientname . '_' . time() . '.' . $extension;
-            $path = $request->file('image')->storeAs('products', $filename, 'public');
-            $validated['image'] = $path;
+        // Actualizar los campos del producto (excepto imágenes)
+        $product->update(collect($validated)->except('images')->toArray());
+
+        // Si hay nuevas imágenes, procesarlas
+        if ($request->hasFile('images')) {
+            // Obtener el orden máximo actual
+            $maxOrder = $product->images()->max('order') ?? 0;
+
+            foreach ($request->file('images') as $index => $image) {
+                $originalname = $image->getClientOriginalName();
+                $extension = $image->getClientOriginalExtension();
+                $basename = pathinfo($originalname, PATHINFO_FILENAME);
+                $cleanName = preg_replace('/[^A-Za-z0-9\-]/', '_', $basename);
+                $cleanName = strtolower(trim($cleanName, '_'));
+                $filename = $cleanName . '_' . time() . '_' . $index . '.' . $extension;
+
+                $path = $image->storeAs('products', $filename, 'public');
+
+                $product->images()->create([
+                    'image_url' => $path,
+                    'is_primary' => $product->images()->count() === 0 && $index === 0, // Primera imagen como principal si no hay otras
+                    'order' => $maxOrder + $index + 1,
+                ]);
+            }
         }
 
-        $product->update($validated);
-        return response()->json($product->load('category'));
+        // Recargar el producto con sus relaciones
+        $product->load(['category', 'images']);
+
+        // Transformar las URLs de las imágenes
+        $product->images->each(function($image) {
+            $image->image_url = url('storage/' . $image->image_url);
+        });
+
+        return response()->json($product, 200);
     }
 
     public function destroy(string $id)
@@ -123,5 +150,33 @@ class ProductController extends Controller
 
         $product->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Delete a specific image from a product
+     */
+    public function deleteImage(string $productId, string $imageId)
+    {
+        $product = Product::findOrFail($productId);
+        $image = $product->images()->findOrFail($imageId);
+
+        // Eliminar archivo físico
+        \Storage::disk('public')->delete($image->image_url);
+        
+        // Eliminar registro
+        $image->delete();
+
+        // Recargar imágenes
+        $product->load('images');
+
+        // Transformar las URLs de las imágenes
+        $product->images->each(function($image) {
+            $image->image_url = url('storage/' . $image->image_url);
+        });
+
+        return response()->json([
+            'message' => 'Imagen eliminada exitosamente',
+            'product' => $product
+        ], 200);
     }
 }

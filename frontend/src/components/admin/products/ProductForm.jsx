@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ImageUploader from './ImageUploader';
 import { PRODUCT_CONFIG } from '../../../constants/product.constants';
 
@@ -13,19 +13,49 @@ export default function ProductForm({
   categories, 
   isEditing = false 
 }) {
-  const [formData, setFormData] = useState(
-    initialData || {
-      name: '',
-      description: '',
-      price: '',
-      stock: '',
-      category_id: '',
-      images: [],
-      imagePreviews: []
-    }
-  );
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    stock: '',
+    category_id: '',
+    images: [],
+    imagePreviews: [],
+    existingImages: [],
+    deletedImageIds: [] // IDs de imágenes existentes que se eliminaron
+  });
 
   const [errors, setErrors] = useState({});
+
+  // Actualizar formData cuando cambia initialData
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name || '',
+        description: initialData.description || '',
+        price: initialData.price || '',
+        stock: initialData.stock || '',
+        category_id: initialData.category_id || '',
+        images: initialData.images || [],
+        imagePreviews: initialData.imagePreviews || [],
+        existingImages: initialData.existingImages || [],
+        deletedImageIds: []
+      });
+    } else {
+      // Resetear el formulario cuando no hay initialData
+      setFormData({
+        name: '',
+        description: '',
+        price: '',
+        stock: '',
+        category_id: '',
+        images: [],
+        imagePreviews: [],
+        existingImages: [],
+        deletedImageIds: []
+      });
+    }
+  }, [initialData, isOpen]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -35,8 +65,30 @@ export default function ProductForm({
     }
   };
 
-  const handleImageChange = ({ images, imagePreviews }) => {
-    setFormData(prev => ({ ...prev, images, imagePreviews }));
+  const handleImageChange = ({ images, imagePreviews, deletedExistingIndex }) => {
+    if (deletedExistingIndex !== undefined) {
+      // Se eliminó una imagen existente
+      const deletedImage = formData.existingImages[deletedExistingIndex];
+      if (deletedImage && deletedImage.id) {
+        setFormData(prev => ({
+          ...prev,
+          existingImages: prev.existingImages.filter((_, i) => i !== deletedExistingIndex),
+          imagePreviews: prev.imagePreviews.filter((_, i) => i !== deletedExistingIndex),
+          deletedImageIds: [...prev.deletedImageIds, deletedImage.id]
+        }));
+      }
+    } else {
+      // Se agregaron nuevas imágenes
+      setFormData(prev => ({ 
+        ...prev, 
+        images, 
+        imagePreviews: [
+          ...prev.imagePreviews.slice(0, prev.existingImages.length), // Mantener previews de existentes
+          ...imagePreviews.slice(prev.existingImages.length) // Agregar nuevos previews
+        ]
+      }));
+    }
+    
     if (errors.images) {
       setErrors(prev => ({ ...prev, images: null }));
     }
@@ -65,8 +117,11 @@ export default function ProductForm({
       newErrors.stock = 'El stock no puede ser negativo';
     }
 
-    if (formData.images.length < PRODUCT_CONFIG.MIN_IMAGES) {
-      newErrors.images = `Debes subir al menos ${PRODUCT_CONFIG.MIN_IMAGES} imágenes`;
+    // Validar imágenes: si es nuevo producto, requiere imágenes
+    // Si es edición y no hay nuevas imágenes, pero hay existentes, está ok
+    const totalImages = (formData.images?.length || 0) + (formData.existingImages?.length || 0);
+    if (totalImages < PRODUCT_CONFIG.MIN_IMAGES) {
+      newErrors.images = `Debes tener al menos ${PRODUCT_CONFIG.MIN_IMAGES} imágenes`;
     }
 
     setErrors(newErrors);
@@ -77,6 +132,12 @@ export default function ProductForm({
     e.preventDefault();
     
     if (validateForm()) {
+      console.log('Submitting form data:', {
+        ...formData,
+        existingImagesCount: formData.existingImages.length,
+        newImagesCount: formData.images.length,
+        deletedImageIds: formData.deletedImageIds
+      }); // Debug
       onSubmit(formData);
     }
   };
@@ -213,6 +274,7 @@ export default function ProductForm({
             images={formData.images}
             imagePreviews={formData.imagePreviews}
             onChange={handleImageChange}
+            existingImagesCount={formData.existingImages.length}
           />
           {errors.images && (
             <p className="text-red-500 text-sm mt-1">{errors.images}</p>

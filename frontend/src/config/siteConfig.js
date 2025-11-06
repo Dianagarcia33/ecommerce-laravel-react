@@ -57,31 +57,53 @@ const defaultConfig = {
       }
     },
 
-    // Esquema de colores preestablecidos (para cambio rápido)
+    // Configuración de la Navbar
+    navbar: {
+      background: 'dark',       // Siempre fondo oscuro para contrastar con logo
+      backgroundColor: '#0f172a', // Slate-900 por defecto
+      textColor: '#ffffff',     // Texto blanco
+      blur: true,               // Efecto glassmorphism cuando hay scroll
+      shadow: 'medium',         // none, small, medium, large
+      borderBottom: false,      // Agregar borde inferior
+    },
+
+    // Esquema de colores preestablecidos (optimizados para logo GLOINT)
     presets: {
-      default: {
-        primary: { from: 'cyan-400', to: 'cyan-600', text: 'cyan-600' },
-        secondary: { from: 'lime-400', to: 'green-500', text: 'lime-600' },
+      // 🎯 Preset Principal - Optimizado para GLOINT PLACE
+      gloint: {
+        primary: { from: 'blue-600', to: 'blue-800', text: 'blue-700' },
+        secondary: { from: 'green-500', to: 'green-600', text: 'green-600' },
+        navbar: { 
+          background: '#1e293b',  // Slate oscuro - contrasta perfecto con cyan/verde
+          textColor: '#ffffff' 
+        }
       },
+      // 🌙 Contraste oscuro - Logo brillante sobre fondos oscuros
+      darkContrast: {
+        primary: { from: 'slate-700', to: 'slate-900', text: 'slate-800' },
+        secondary: { from: 'cyan-400', to: 'cyan-600', text: 'cyan-500' },
+        navbar: { 
+          background: '#0f172a',  // Slate-900 profundo
+          textColor: '#ffffff' 
+        }
+      },
+      // 🔥 Contraste cálido - Colores cálidos que hacen explotar el logo
+      warmContrast: {
+        primary: { from: 'orange-500', to: 'red-500', text: 'orange-600' },
+        secondary: { from: 'purple-500', to: 'purple-600', text: 'purple-600' },
+        navbar: { 
+          background: '#7c2d12',  // Naranja oscuro/marrón - contrasta con colores fríos
+          textColor: '#ffffff' 
+        }
+      },
+      // 💜 Púrpura elegante - Complementa sin competir con el logo
       purple: {
         primary: { from: 'purple-400', to: 'purple-600', text: 'purple-600' },
         secondary: { from: 'pink-400', to: 'pink-600', text: 'pink-600' },
-      },
-      blue: {
-        primary: { from: 'blue-400', to: 'blue-600', text: 'blue-600' },
-        secondary: { from: 'indigo-400', to: 'indigo-600', text: 'indigo-600' },
-      },
-      orange: {
-        primary: { from: 'orange-400', to: 'orange-600', text: 'orange-600' },
-        secondary: { from: 'amber-400', to: 'amber-600', text: 'amber-600' },
-      },
-      green: {
-        primary: { from: 'emerald-400', to: 'emerald-600', text: 'emerald-600' },
-        secondary: { from: 'teal-400', to: 'teal-600', text: 'teal-600' },
-      },
-      red: {
-        primary: { from: 'rose-400', to: 'rose-600', text: 'rose-600' },
-        secondary: { from: 'red-400', to: 'red-600', text: 'red-600' },
+        navbar: { 
+          background: '#581c87',  // Púrpura oscuro - contrasta bien
+          textColor: '#ffffff' 
+        }
       }
     }
   },

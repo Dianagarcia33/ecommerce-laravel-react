@@ -18,8 +18,23 @@ export default function SiteSettings() {
   const navigate = useNavigate();
   const siteConfig = useSiteConfig(); // Usar hook para obtener config reactiva
   const [activeTab, setActiveTab] = useState('colors');
-  const [initialConfig] = useState(siteConfig); // Guardar config inicial para comparar
-  const [config, setConfig] = useState(siteConfig);
+  
+  // Asegurar que la configuración tenga todos los valores necesarios
+  const ensureNavbarConfig = (cfg) => {
+    if (!cfg.theme.navbar) {
+      cfg.theme.navbar = {
+        background: 'white',
+        blur: true,
+        shadow: 'medium',
+        textColor: 'dark',
+        borderBottom: false
+      };
+    }
+    return cfg;
+  };
+  
+  const [initialConfig] = useState(ensureNavbarConfig({ ...siteConfig })); // Guardar config inicial para comparar
+  const [config, setConfig] = useState(ensureNavbarConfig({ ...siteConfig }));
   const [savedMessage, setSavedMessage] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -89,16 +104,16 @@ export default function SiteSettings() {
     }
     
     current[keys[keys.length - 1]] = value;
+    console.log('Config updated:', path, '=', value); // Debug
+    console.log('New navbar config:', newConfig.theme?.navbar); // Debug
     setConfig(newConfig);
   };
 
   const colorPresets = [
-    { name: 'default', label: 'Cyan y Lime (Por defecto)', colors: ['cyan', 'lime'] },
-    { name: 'purple', label: 'Púrpura y Rosa', colors: ['purple', 'pink'] },
-    { name: 'blue', label: 'Azul e Índigo', colors: ['blue', 'indigo'] },
-    { name: 'orange', label: 'Naranja y Ámbar', colors: ['orange', 'amber'] },
-    { name: 'green', label: 'Esmeralda y Teal', colors: ['emerald', 'teal'] },
-    { name: 'red', label: 'Rosa y Rojo', colors: ['rose', 'red'] },
+    { name: 'gloint', label: '✨ GLOINT - Azul Profundo y Verde', colors: ['blue', 'green'], description: '🎯 Optimizado para logo GLOINT (recomendado)' },
+    { name: 'darkContrast', label: '🌙 Contraste Oscuro Elegante', colors: ['slate', 'cyan'], description: '⚫ Logo brillante sobre fondos oscuros' },
+    { name: 'warmContrast', label: '🔥 Contraste Cálido Vibrante', colors: ['orange', 'purple'], description: '🌟 Hace explotar los colores fríos del logo' },
+    { name: 'purple', label: '💜 Púrpura Elegante', colors: ['purple', 'pink'], description: '✨ Sofisticado, complementa el logo sin competir' },
   ];
 
   // Mapa de colores Tailwind a valores hex reales
@@ -130,6 +145,7 @@ export default function SiteSettings() {
     'blue-500': '#3b82f6',
     'blue-600': '#2563eb',
     'blue-700': '#1d4ed8',
+    'blue-800': '#1e40af',
     // Indigo
     'indigo-400': '#818cf8',
     'indigo-500': '#6366f1',
@@ -158,6 +174,10 @@ export default function SiteSettings() {
     'red-400': '#f87171',
     'red-500': '#ef4444',
     'red-600': '#dc2626',
+    // Slate (para dark contrast)
+    'slate-700': '#334155',
+    'slate-800': '#1e293b',
+    'slate-900': '#0f172a',
   };
 
   const applyPreset = (presetName) => {
@@ -179,6 +199,15 @@ export default function SiteSettings() {
         light: tailwindToHex[preset.secondary.from] || '#a3e635',
         dark: tailwindToHex[preset.secondary.to] || '#65a30d',
       };
+      
+      // Aplicar color de navbar específico del preset
+      if (preset.navbar) {
+        if (!newConfig.theme.navbar) {
+          newConfig.theme.navbar = {};
+        }
+        newConfig.theme.navbar.backgroundColor = preset.navbar.background;
+        newConfig.theme.navbar.textColor = preset.navbar.textColor;
+      }
       
       setConfig(newConfig);
       
@@ -293,7 +322,200 @@ export default function SiteSettings() {
                 <div className="space-y-8">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">🎨 Colores y Tema</h2>
-                    <p className="text-gray-600">Personaliza la paleta de colores de tu sitio</p>
+                    <p className="text-gray-600">Personaliza la paleta de colores y estilo de la navbar</p>
+                  </div>
+
+                  {/* Configuración de Navbar */}
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border-2 border-blue-200">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="text-2xl">🎯</span>
+                      Estilo de la Barra de Navegación
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-6">
+                      Personaliza el aspecto de la navbar para mejorar el contraste con tu logo
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Fondo de Navbar */}
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">
+                          Fondo de la Navbar
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { value: 'white', label: 'Blanco', color: '#ffffff', border: true },
+                            { value: 'transparent', label: 'Transparente', gradient: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)' },
+                            { value: 'primary', label: 'Primario', useConfig: 'primary' },
+                            { value: 'dark', label: 'Oscuro', color: '#0f172a' },
+                            { value: 'gradient', label: 'Gradiente', useConfig: 'gradient' },
+                          ].map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => updateConfig('theme.navbar.background', option.value)}
+                              className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
+                                config.theme.navbar?.background === option.value
+                                  ? 'border-blue-500 bg-blue-50 shadow-md'
+                                  : 'border-gray-300 hover:border-blue-300'
+                              }`}
+                            >
+                              <div 
+                                className="w-full h-12 rounded mb-2"
+                                style={
+                                  option.useConfig === 'primary' ? { background: `linear-gradient(to right, ${config.theme.colors.primary.hex}, ${config.theme.colors.primary.dark})` } :
+                                  option.useConfig === 'gradient' ? { background: `linear-gradient(to right, ${config.theme.colors.primary.hex}, ${config.theme.colors.secondary.hex})` } :
+                                  option.gradient ? { backgroundImage: option.gradient, backgroundSize: '20px 20px' } :
+                                  { backgroundColor: option.color, border: option.border ? '1px solid #e5e7eb' : 'none' }
+                                }
+                              />
+                              <span className="text-xs font-medium text-gray-700">{option.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Color de Texto */}
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">
+                          Color del Texto
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { value: 'dark', label: 'Oscuro', color: '#1f2937' },
+                            { value: 'light', label: 'Claro', color: '#ffffff' },
+                            { value: 'primary', label: 'Primario', useConfig: true },
+                          ].map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => updateConfig('theme.navbar.textColor', option.value)}
+                              className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
+                                config.theme.navbar?.textColor === option.value
+                                  ? 'border-blue-500 bg-blue-50 shadow-md'
+                                  : 'border-gray-300 hover:border-blue-300'
+                              }`}
+                            >
+                              <div 
+                                className="w-full h-12 rounded mb-2 flex items-center justify-center"
+                                style={{ 
+                                  backgroundColor: option.value === 'light' ? '#1f2937' : '#f9fafb',
+                                  color: option.useConfig ? config.theme.colors.primary.hex : option.color
+                                }}
+                              >
+                                <span className="text-xl font-bold">Aa</span>
+                              </div>
+                              <span className="text-xs font-medium text-gray-700">{option.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Sombra */}
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">
+                          Sombra
+                        </label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {[
+                            { value: 'none', label: 'Sin sombra' },
+                            { value: 'small', label: 'Pequeña' },
+                            { value: 'medium', label: 'Media' },
+                            { value: 'large', label: 'Grande' },
+                          ].map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => updateConfig('theme.navbar.shadow', option.value)}
+                              className={`p-3 rounded-lg border-2 transition-all ${
+                                config.theme.navbar?.shadow === option.value
+                                  ? 'border-blue-500 bg-blue-50'
+                                  : 'border-gray-300 hover:border-blue-300'
+                              }`}
+                            >
+                              <span className="text-xs font-medium text-gray-700 block text-center">
+                                {option.label}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Opciones adicionales */}
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">
+                          Efectos Adicionales
+                        </label>
+                        <div className="space-y-2">
+                          <label className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-300 cursor-pointer hover:border-blue-300 transition-all">
+                            <input
+                              type="checkbox"
+                              checked={config.theme.navbar?.blur || false}
+                              onChange={(e) => updateConfig('theme.navbar.blur', e.target.checked)}
+                              className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                            />
+                            <div>
+                              <span className="text-sm font-medium text-gray-900 block">Efecto Blur</span>
+                              <span className="text-xs text-gray-600">Glassmorphism al hacer scroll</span>
+                            </div>
+                          </label>
+                          <label className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-300 cursor-pointer hover:border-blue-300 transition-all">
+                            <input
+                              type="checkbox"
+                              checked={config.theme.navbar?.borderBottom || false}
+                              onChange={(e) => updateConfig('theme.navbar.borderBottom', e.target.checked)}
+                              className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                            />
+                            <div>
+                              <span className="text-sm font-medium text-gray-900 block">Borde Inferior</span>
+                              <span className="text-xs text-gray-600">Línea separadora</span>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Vista Previa de Navbar */}
+                    <div className="mt-6">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">
+                        Vista Previa
+                      </label>
+                      <div className="bg-white rounded-lg overflow-hidden border-2 border-gray-200">
+                        <div 
+                          className={`h-16 flex items-center justify-between px-6 ${config.theme.navbar?.borderBottom ? 'border-b border-gray-200' : ''}`}
+                          style={{
+                            background: config.theme.navbar?.background === 'white' ? '#ffffff' :
+                                      config.theme.navbar?.background === 'dark' ? '#0f172a' :
+                                      config.theme.navbar?.background === 'primary' ? `linear-gradient(to right, ${config.theme.colors.primary.hex}, ${config.theme.colors.primary.dark})` :
+                                      config.theme.navbar?.background === 'gradient' ? `linear-gradient(to right, ${config.theme.colors.primary.hex}, ${config.theme.colors.secondary.hex})` :
+                                      'transparent',
+                            backdropFilter: config.theme.navbar?.blur ? 'blur(8px)' : 'none'
+                          }}
+                        >
+                          <div 
+                            className="font-bold text-lg"
+                            style={{ 
+                              color: config.theme.navbar?.background === 'dark' || config.theme.navbar?.background === 'gradient' || config.theme.navbar?.textColor === 'light' ? '#ffffff' :
+                                     config.theme.navbar?.textColor === 'primary' ? config.theme.colors.primary.hex :
+                                     '#1f2937'
+                            }}
+                          >
+                            Logo
+                          </div>
+                          <div className="flex gap-4">
+                            {['Inicio', 'Productos', 'Contacto'].map((item) => (
+                              <span 
+                                key={item}
+                                className="text-sm font-medium"
+                                style={{ 
+                                  color: config.theme.navbar?.background === 'dark' || config.theme.navbar?.background === 'gradient' || config.theme.navbar?.textColor === 'light' ? '#ffffff' :
+                                         config.theme.navbar?.textColor === 'primary' ? config.theme.colors.primary.hex :
+                                         '#4b5563'
+                                }}
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Presets rápidos */}
@@ -313,27 +535,34 @@ export default function SiteSettings() {
                           <button
                             key={preset.name}
                             onClick={() => applyPreset(preset.name)}
-                            className={`flex items-center justify-between p-4 border-2 rounded-xl transition-all group ${
+                            className={`flex flex-col items-start p-4 border-2 rounded-xl transition-all group ${
                               isActive 
                                 ? 'border-green-500 bg-green-50' 
                                 : 'border-gray-200 hover:border-cyan-400 hover:shadow-lg'
                             }`}
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="flex gap-1">
-                                <div
-                                  className="w-10 h-10 rounded-lg group-hover:scale-110 transition-transform shadow-md"
-                                  style={{ backgroundColor: color1 }}
-                                />
-                                <div
-                                  className="w-10 h-10 rounded-lg group-hover:scale-110 transition-transform shadow-md"
-                                  style={{ backgroundColor: color2 }}
-                                />
+                            <div className="flex items-center justify-between w-full mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="flex gap-1">
+                                  <div
+                                    className="w-10 h-10 rounded-lg group-hover:scale-110 transition-transform shadow-md"
+                                    style={{ backgroundColor: color1 }}
+                                  />
+                                  <div
+                                    className="w-10 h-10 rounded-lg group-hover:scale-110 transition-transform shadow-md"
+                                    style={{ backgroundColor: color2 }}
+                                  />
+                                </div>
+                                <span className="font-medium text-gray-900 text-left">{preset.label}</span>
                               </div>
-                              <span className="font-medium text-gray-900">{preset.label}</span>
+                              {isActive && (
+                                <CheckCircleIcon className="w-6 h-6 text-green-500 flex-shrink-0" />
+                              )}
                             </div>
-                            {isActive && (
-                              <CheckCircleIcon className="w-6 h-6 text-green-500 flex-shrink-0" />
+                            {preset.description && (
+                              <p className="text-xs text-gray-600 mt-1 text-left ml-[68px]">
+                                {preset.description}
+                              </p>
                             )}
                           </button>
                         );
