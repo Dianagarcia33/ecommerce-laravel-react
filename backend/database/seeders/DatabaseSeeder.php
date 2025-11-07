@@ -127,10 +127,19 @@ class DatabaseSeeder extends Seeder
         // 2. Crear imágenes para productos
         $this->call(ProductImagesSeeder::class);
 
-        // 3. Crear datos de prueba del dashboard
+        // 3. Crear tags
+        $this->call(TagSeeder::class);
+
+        // 4. Asignar tags a productos
+        $this->call(AssignTagsSeeder::class);
+
+        // 5. Crear datos de prueba del dashboard
         $this->call(DashboardTestDataSeeder::class);
 
-        // 4. Crear plantillas de email
+        // 6. Crear plantillas de email
         $this->call(EmailTemplateSeeder::class);
+
+        // 7. Crear reseñas de productos
+        $this->call(ReviewSeeder::class);
     }
 }
