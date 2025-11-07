@@ -366,7 +366,7 @@ export default function Layout() {
           <ShoppingBagIcon className="absolute top-4 left-20 w-8 h-8 text-cyan-300 opacity-30 animate-float" />
           <SparklesIcon className="absolute top-4 right-40 w-6 h-6 text-lime-300 opacity-30 animate-float" style={{ animationDelay: '1s' }} />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center group">
@@ -806,7 +806,7 @@ export default function Layout() {
           ></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 py-16">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             {/* Brand Section */}

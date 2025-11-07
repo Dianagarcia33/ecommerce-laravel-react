@@ -202,7 +202,7 @@ export default function HeroSection({
             ) : displayedProducts.length > 0 ? (
               <div className="relative">
                 {/* Producto principal (grande) - CON DISEÑO PREMIUM */}
-                <div className="relative group mb-4">
+                <div className="relative group mb-4 overflow-hidden rounded-3xl">
                   {/* Badge flotante de destacado */}
                   <div 
                     className="absolute -top-3 -left-3 z-20 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
@@ -213,7 +213,7 @@ export default function HeroSection({
 
                   <Link 
                     to={`/product/${displayedProducts[0].id}/parallax`}
-                    className="block aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white"
+                    className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white"
                   >
                     <img
                       src={displayedProducts[0].images?.[0]?.image_url || '/placeholder-product.jpg'}
