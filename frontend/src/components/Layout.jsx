@@ -367,7 +367,7 @@ export default function Layout() {
           <SparklesIcon className="absolute top-4 right-40 w-6 h-6 text-lime-300 opacity-30 animate-float" style={{ animationDelay: '1s' }} />
         </div>
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-24">
             {/* Logo */}
             <Link to="/" className="flex items-center group">
               <div className="relative transition duration-300 transform group-hover:scale-105">
@@ -785,7 +785,7 @@ export default function Layout() {
       </header>
 
       {/* Spacer for fixed header */}
-      <div className="h-20"></div>
+      <div className="h-24"></div>
 
       {/* Main Content */}
       <main className="min-h-screen">

@@ -201,86 +201,89 @@ export default function HeroSection({
               </div>
             ) : displayedProducts.length > 0 ? (
               <div className="relative">
-                {/* Producto principal (grande) - CON DISEÑO PREMIUM */}
-                <div className="relative group mb-4 overflow-hidden rounded-3xl">
-                  {/* Badge flotante de destacado */}
-                  <div 
-                    className="absolute -top-3 -left-3 z-20 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
-                    style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
-                  >
-                    ⭐ Destacado
+                {/* Layout: Producto grande a la izquierda, productos pequeños en columna a la derecha */}
+                <div className="flex gap-4">
+                  {/* Producto principal (grande) - LADO IZQUIERDO */}
+                  <div className="relative group overflow-hidden rounded-3xl flex-[2]">
+                    {/* Badge flotante de destacado */}
+                    <div 
+                      className="absolute -top-3 -left-3 z-20 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
+                      style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
+                    >
+                      ⭐ Destacado
+                    </div>
+
+                    <Link 
+                      to={`/product/${displayedProducts[0].id}/parallax`}
+                      className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white"
+                    >
+                      <img
+                        src={displayedProducts[0].images?.[0]?.image_url || '/placeholder-product.jpg'}
+                        alt={displayedProducts[0].name}
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Link>
+                    
+                    {/* Favorito en producto principal */}
+                    <button
+                      onClick={() => toggleFavorite(displayedProducts[0].id)}
+                      className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-xl transition-all hover:scale-110"
+                    >
+                      {isFavorite(displayedProducts[0].id) ? (
+                        <HeartSolid className="w-6 h-6 text-red-500" />
+                      ) : (
+                        <HeartIcon className="w-6 h-6 text-gray-700" />
+                      )}
+                    </button>
+
+                    {/* Precio destacado */}
+                    <div 
+                      className="absolute bottom-4 left-4 z-10 px-6 py-3 rounded-2xl font-black text-white shadow-xl text-2xl"
+                      style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
+                    >
+                      ${displayedProducts[0].price}
+                    </div>
+
+                    {/* Info del producto principal - aparece en hover */}
+                    <div className="absolute inset-x-0 bottom-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black via-black/90 to-transparent">
+                      <h3 className="font-bold text-2xl mb-2">{displayedProducts[0].name}</h3>
+                      <p className="text-sm text-gray-200 line-clamp-2">
+                        {displayedProducts[0].description || 'Producto de alta calidad con garantía'}
+                      </p>
+                    </div>
                   </div>
 
-                  <Link 
-                    to={`/product/${displayedProducts[0].id}/parallax`}
-                    className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white"
-                  >
-                    <img
-                      src={displayedProducts[0].images?.[0]?.image_url || '/placeholder-product.jpg'}
-                      alt={displayedProducts[0].name}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </Link>
-                  
-                  {/* Favorito en producto principal */}
-                  <button
-                    onClick={() => toggleFavorite(displayedProducts[0].id)}
-                    className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-xl transition-all hover:scale-110"
-                  >
-                    {isFavorite(displayedProducts[0].id) ? (
-                      <HeartSolid className="w-6 h-6 text-red-500" />
-                    ) : (
-                      <HeartIcon className="w-6 h-6 text-gray-700" />
-                    )}
-                  </button>
-
-                  {/* Precio destacado */}
-                  <div 
-                    className="absolute bottom-4 left-4 z-10 px-6 py-3 rounded-2xl font-black text-white shadow-xl text-2xl"
-                    style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
-                  >
-                    ${displayedProducts[0].price}
-                  </div>
-
-                  {/* Info del producto principal - aparece en hover */}
-                  <div className="absolute inset-x-0 bottom-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black via-black/90 to-transparent">
-                    <h3 className="font-bold text-2xl mb-2">{displayedProducts[0].name}</h3>
-                    <p className="text-sm text-gray-200 line-clamp-2">
-                      {displayedProducts[0].description || 'Producto de alta calidad con garantía'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Productos pequeños (grid) - CON BORDE BLANCO */}
-                {displayedProducts.length > 1 && (
-                  <div className="grid grid-cols-3 gap-4">
-                    {displayedProducts.slice(1, 4).map((product) => (
-                      <Link
-                        key={product.id}
-                        to={`/product/${product.id}/parallax`}
-                        className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all ring-2 ring-white"
-                      >
-                        <img
-                          src={product.images?.[0]?.image_url || '/placeholder-product.jpg'}
-                          alt={product.name}
-                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="absolute bottom-0 left-0 right-0 p-3">
-                            <p className="text-white text-xs font-bold truncate mb-1">{product.name}</p>
-                            <p 
-                              className="text-sm font-black"
-                              style={{ color: colors.primary.hex }}
-                            >
-                              ${product.price}
-                            </p>
+                  {/* Productos pequeños (columna vertical) - LADO DERECHO */}
+                  {displayedProducts.length > 1 && (
+                    <div className="flex flex-col gap-4 flex-1">
+                      {displayedProducts.slice(1, 4).map((product) => (
+                        <Link
+                          key={product.id}
+                          to={`/product/${product.id}/parallax`}
+                          className="group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all ring-2 ring-white"
+                        >
+                          <img
+                            src={product.images?.[0]?.image_url || '/placeholder-product.jpg'}
+                            alt={product.name}
+                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute bottom-0 left-0 right-0 p-3">
+                              <p className="text-white text-xs font-bold truncate mb-1">{product.name}</p>
+                              <p 
+                                className="text-sm font-black"
+                                style={{ color: colors.primary.hex }}
+                              >
+                                ${product.price}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Controles del carrusel - ESTILO PREMIUM */}
                 {totalSlides > 1 && (

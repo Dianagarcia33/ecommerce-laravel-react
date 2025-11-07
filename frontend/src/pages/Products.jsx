@@ -99,7 +99,7 @@ export default function Products() {
           ></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24 text-center">
           <div 
             className="inline-flex items-center rounded-full px-4 py-2 mb-6 shadow-lg text-gray-900 font-bold"
             style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
@@ -116,7 +116,7 @@ export default function Products() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="w-full px-8 sm:px-12 lg:px-16 xl:px-24 py-12">
         {/* Barra de búsqueda y filtros */}
         <div className="mb-8 space-y-4">
           {/* Búsqueda */}
