@@ -25,7 +25,7 @@ export default function RecentlyViewedSection() {
 
   return (
     <section className="py-12 relative overflow-hidden">
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">

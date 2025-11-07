@@ -99,7 +99,7 @@ export default function CategoriesSection({ categories = [], loading = false }) 
 
   return (
     <section className="py-16" style={{ background: 'transparent' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-8 sm:px-12 lg:px-16 xl:px-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4">
             Explora por{' '}

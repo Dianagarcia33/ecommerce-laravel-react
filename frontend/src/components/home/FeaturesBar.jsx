@@ -46,7 +46,7 @@ export default function FeaturesBar() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <div 

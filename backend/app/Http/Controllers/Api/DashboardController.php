@@ -121,14 +121,28 @@ class DashboardController extends Controller
                     'products.id',
                     'products.name',
                     'products.price',
-                    'products.image',
                     DB::raw('SUM(order_items.quantity) as total_sold'),
                     DB::raw('SUM(order_items.price * order_items.quantity) as total_revenue')
                 )
-                ->groupBy('products.id', 'products.name', 'products.price', 'products.image')
+                ->groupBy('products.id', 'products.name', 'products.price')
                 ->orderBy('total_sold', 'desc')
                 ->limit($limit)
-                ->get();
+                ->get()
+                ->map(function ($product) {
+                    // Obtener la primera imagen del producto
+                    $image = DB::table('product_images')
+                        ->where('product_id', $product->id)
+                        ->value('image_url');
+                    
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'image' => $image,
+                        'total_sold' => $product->total_sold,
+                        'total_revenue' => $product->total_revenue,
+                    ];
+                });
 
             return response()->json($topProducts);
         } catch (\Exception $e) {
@@ -181,11 +195,21 @@ class DashboardController extends Controller
             $threshold = $request->get('threshold', 10);
             $limit = $request->get('limit', 5);
 
-            $lowStockProducts = Product::where('stock', '<=', $threshold)
+            $lowStockProducts = Product::with('images:id,product_id,image_url')
+                ->where('stock', '<=', $threshold)
                 ->where('stock', '>', 0)
                 ->orderBy('stock', 'asc')
                 ->limit($limit)
-                ->get(['id', 'name', 'stock', 'price', 'image']);
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'stock' => $product->stock,
+                        'price' => $product->price,
+                        'image' => $product->images->first()->image_url ?? null,
+                    ];
+                });
 
             return response()->json($lowStockProducts);
         } catch (\Exception $e) {

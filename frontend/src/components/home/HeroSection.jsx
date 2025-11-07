@@ -78,7 +78,7 @@ export default function HeroSection({
         <ShieldCheckIcon className="absolute bottom-40 right-1/3 w-12 h-12 text-cyan-300 opacity-20 animate-float" style={{ animationDelay: '1.5s' }} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* COLUMNA IZQUIERDA - Contenido de texto */}

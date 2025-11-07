@@ -101,7 +101,7 @@ export default function ProductsGrid({
       {/* Background decorativo - Ya no blanco */}
       <div className="absolute inset-0" style={{ opacity: 0 }} />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24">
         {/* Header con diseño magazine */}
         <div className="mb-8 relative">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
