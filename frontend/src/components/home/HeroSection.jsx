@@ -98,6 +98,48 @@ export default function HeroSection({
               </div>
             </div>
 
+            {/* Features en una sola fila - ARRIBA DEL TÍTULO */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
+                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
+                >
+                  <TruckIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">Envío Express Gratis</p>
+                  <p className="text-xs text-gray-300">Entregas en 24-48h</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
+                  style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
+                >
+                  <ShieldCheckIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">Compra 100% Segura</p>
+                  <p className="text-xs text-gray-300">Protección garantizada</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
+                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+                >
+                  <TagIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">Mejor Precio</p>
+                  <p className="text-xs text-gray-300">Ofertas exclusivas</p>
+                </div>
+              </div>
+            </div>
+
             {/* Título principal con gradiente */}
             <div className="space-y-4">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight">
@@ -117,46 +159,6 @@ export default function HeroSection({
               <p className="text-xl lg:text-2xl text-gray-200 font-normal max-w-xl leading-relaxed">
                 {home.hero.subtitle}
               </p>
-            </div>
-
-            {/* Features con diseño horizontal - DISTINTIVO */}
-            <div className="space-y-3 py-4">
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
-                >
-                  <TruckIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-base">Envío Express Gratis</p>
-                  <p className="text-sm text-gray-300">Entregas en 24-48 horas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
-                >
-                  <ShieldCheckIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-base">Compra 100% Segura</p>
-                  <p className="text-sm text-gray-300">Protección total garantizada</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-                >
-                  <TagIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-base">Mejor Precio del Mercado</p>
-                  <p className="text-sm text-gray-300">Ofertas exclusivas diarias</p>
-                </div>
-              </div>
             </div>
 
             {/* Botones de acción */}
@@ -204,7 +206,7 @@ export default function HeroSection({
                 {/* Layout: Producto grande a la izquierda, productos pequeños en columna a la derecha */}
                 <div className="flex gap-4">
                   {/* Producto principal (grande) - LADO IZQUIERDO */}
-                  <div className="relative group overflow-hidden rounded-3xl flex-[2]">
+                  <div className="relative group overflow-hidden rounded-3xl flex-[3]">
                     {/* Badge flotante de destacado */}
                     <div 
                       className="absolute -top-3 -left-3 z-20 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
