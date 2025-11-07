@@ -40,6 +40,7 @@ class OrderController extends Controller
             'customer_phone' => 'nullable|string',
             'shipping_address' => 'required|string',
             'notes' => 'nullable|string',
+            'is_guest' => 'boolean',
         ]);
 
         try {
@@ -71,9 +72,14 @@ class OrderController extends Controller
                 $product->decrement('stock', $item['quantity']);
             }
 
+            // Determinar si es invitado o usuario autenticado
+            $isGuest = $request->input('is_guest', false) || !$request->user();
+            
             // Crear orden
             $order = Order::create([
-                'user_id' => $request->user()->id,
+                'user_id' => $isGuest ? null : $request->user()->id,
+                'is_guest' => $isGuest,
+                'guest_token' => $isGuest ? Order::generateGuestToken() : null,
                 'total' => $total,
                 'status' => 'pending',
                 'customer_name' => $request->customer_name,
@@ -90,10 +96,18 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json([
+            $response = [
                 'message' => 'Orden creada exitosamente',
                 'order' => $order->load('items.product')
-            ], 201);
+            ];
+
+            // Si es invitado, incluir el token para rastreo
+            if ($isGuest) {
+                $response['guest_token'] = $order->guest_token;
+                $response['tracking_url'] = url("/track-order/{$order->guest_token}");
+            }
+
+            return response()->json($response, 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -132,6 +146,33 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Estado actualizado exitosamente',
+            'order' => $order
+        ]);
+    }
+
+    /**
+     * Rastrear orden de invitado por token
+     */
+    public function trackGuestOrder(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email'
+        ]);
+
+        $order = Order::where('guest_token', $request->token)
+            ->where('customer_email', $request->email)
+            ->where('is_guest', true)
+            ->with('items.product')
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Orden no encontrada. Verifica el código y email.'
+            ], 404);
+        }
+
+        return response()->json([
             'order' => $order
         ]);
     }

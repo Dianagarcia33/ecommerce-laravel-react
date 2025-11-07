@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\NewsletterController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas de autenticación
@@ -21,9 +24,21 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
+// Tags (públicas)
+Route::get('/tags', [TagController::class, 'index']);
+Route::get('/tags/{slug}/products', [TagController::class, 'products']);
+Route::get('/search/products', [TagController::class, 'searchProducts']);
+
 // Newsletter (públicas)
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
 Route::post('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe']);
+
+// Reviews (públicas - ver reseñas)
+Route::get('/products/{productId}/reviews', [ReviewController::class, 'index']);
+
+// Órdenes (públicas - para invitados)
+Route::post('/orders/guest', [OrderController::class, 'store']);
+Route::post('/orders/track', [OrderController::class, 'trackGuestOrder']);
 
 // Rutas protegidas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
@@ -43,6 +58,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    
+    // Favoritos
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::post('/favorites/toggle', [FavoriteController::class, 'toggle']);
+    Route::delete('/favorites/{productId}', [FavoriteController::class, 'destroy']);
+    Route::get('/favorites/check/{productId}', [FavoriteController::class, 'check']);
     
     // Categorías (solo admin)
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -80,4 +102,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/newsletter/send-test', [NewsletterController::class, 'sendTest']);
     Route::delete('/newsletter/{id}', [NewsletterController::class, 'destroy']);
     Route::patch('/newsletter/{id}/activate', [NewsletterController::class, 'activate']);
+    
+    // Tags (solo admin)
+    Route::post('/tags', [TagController::class, 'store']);
+    Route::post('/products/{product}/tags', [TagController::class, 'attachToProduct']);
+    
+    // Reviews (protegidas - crear, editar, eliminar)
+    Route::post('/products/{productId}/reviews', [ReviewController::class, 'store']);
+    Route::get('/products/{productId}/reviews/user', [ReviewController::class, 'getUserReview']);
+    Route::put('/reviews/{reviewId}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{reviewId}', [ReviewController::class, 'destroy']);
 });

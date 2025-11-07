@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed'
+import { useAuth } from '../context/AuthContext'
 import { 
   ShoppingCartIcon,
   StarIcon,
@@ -14,20 +16,31 @@ import {
 } from '@heroicons/react/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid'
 import api from '../services/api'
+import ReviewsCarousel from '../components/reviews/ReviewsCarousel'
+import ReviewForm from '../components/reviews/ReviewForm'
 
 export default function ProductLandingParallax() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { addToCart } = useCart()
+  const { addRecentlyViewed } = useRecentlyViewed()
+  const { user } = useAuth()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
   const [scrollY, setScrollY] = useState(0)
   const [showNotification, setShowNotification] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [reviewsStats, setReviewsStats] = useState({
+    average_rating: 0,
+    total_reviews: 0
+  })
+  const [loadingReviews, setLoadingReviews] = useState(true)
 
   useEffect(() => {
     fetchProduct()
+    fetchReviews()
     
     // Parallax scroll effect
     const handleScroll = () => {
@@ -44,11 +57,34 @@ export default function ProductLandingParallax() {
     try {
       const response = await api.get(`/products/${id}`)
       setProduct(response.data)
+      
+      // Guardar en historial de productos vistos
+      addRecentlyViewed(response.data)
     } catch (error) {
       console.error('Error al cargar producto:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchReviews = async () => {
+    try {
+      const response = await api.get(`/products/${id}/reviews`)
+      setReviews(response.data.reviews)
+      setReviewsStats({
+        average_rating: response.data.average_rating,
+        total_reviews: response.data.total_reviews
+      })
+    } catch (error) {
+      console.error('Error al cargar reseñas:', error)
+    } finally {
+      setLoadingReviews(false)
+    }
+  }
+
+  const handleReviewSubmitted = (newReview) => {
+    // Actualizar la lista de reseñas
+    fetchReviews()
   }
 
   const handleAddToCart = () => {
@@ -392,7 +428,7 @@ export default function ProductLandingParallax() {
               { label: 'Categoría', value: product.category?.name || 'General' },
               { label: 'Disponibilidad', value: product.stock > 0 ? `${product.stock} unidades` : 'Agotado' },
               { label: 'SKU', value: `PRD-${product.id.toString().padStart(6, '0')}` },
-              { label: 'Rating', value: '4.8/5.0 ⭐' }
+              { label: 'Rating', value: reviewsStats.average_rating > 0 ? `${reviewsStats.average_rating}/5.0 ⭐` : 'Sin reseñas' }
             ].map((spec, index) => (
               <div
                 key={index}
@@ -515,6 +551,50 @@ export default function ProductLandingParallax() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Reviews Carousel */}
+          <div className="mb-16">
+            {loadingReviews ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-cyan-500"></div>
+              </div>
+            ) : (
+              <ReviewsCarousel 
+                reviews={reviews}
+                averageRating={reviewsStats.average_rating}
+                totalReviews={reviewsStats.total_reviews}
+              />
+            )}
+          </div>
+
+          {/* Review Form */}
+          {user ? (
+            <ReviewForm 
+              productId={id}
+              onReviewSubmitted={handleReviewSubmitted}
+            />
+          ) : (
+            <div className="bg-gradient-to-br from-cyan-50 to-teal-50 rounded-2xl p-12 text-center border border-cyan-100">
+              <StarSolidIcon className="w-16 h-16 mx-auto text-cyan-500 mb-4" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                ¿Ya compraste este producto?
+              </h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Inicia sesión para dejar tu reseña y ayudar a otros clientes
+              </p>
+              <button
+                onClick={() => navigate('/login')}
+                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-bold rounded-xl hover:shadow-xl transform hover:scale-105 transition-all"
+              >
+                Iniciar Sesión
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

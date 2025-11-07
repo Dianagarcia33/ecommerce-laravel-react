@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useFavorites } from '../context/FavoritesContext'
+import { useToast } from '../context/ToastContext'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import {
   ShoppingCartIcon,
   FunnelIcon,
   MagnifyingGlassIcon,
   SparklesIcon,
-  TagIcon
+  TagIcon,
+  HeartIcon
 } from '@heroicons/react/24/outline'
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import api from '../services/api'
 
 
@@ -21,6 +25,8 @@ export default function Products() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const { addToCart } = useCart()
+  const { toggleFavorite, isFavorite } = useFavorites()
+  const { showToast } = useToast()
   
   // Obtener configuración del sitio
   const config = useSiteConfig()
@@ -271,6 +277,33 @@ export default function Products() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </Link>
+
+                  {/* Botón de favorito */}
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      const result = await toggleFavorite(product.id)
+                      
+                      if (result.needsLogin) {
+                        showToast('Debes iniciar sesión para agregar favoritos', 'warning')
+                      } else if (result.success) {
+                        if (result.isFavorite) {
+                          showToast('¡Producto agregado a favoritos!', 'favorite-added')
+                        } else {
+                          showToast('Producto eliminado de favoritos', 'favorite-removed')
+                        }
+                      } else if (result.error) {
+                        showToast('Error al actualizar favorito', 'warning')
+                      }
+                    }}
+                    className="absolute top-3 left-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-300 transform hover:scale-110 z-10"
+                  >
+                    {isFavorite(product.id) ? (
+                      <HeartIconSolid className="w-5 h-5 text-red-500" />
+                    ) : (
+                      <HeartIcon className="w-5 h-5 text-gray-700" />
+                    )}
+                  </button>
 
                   {/* Badge de stock */}
                   {product.stock < 10 && product.stock > 0 && (

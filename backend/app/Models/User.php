@@ -63,6 +63,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's favorites
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Get the user's favorite products
+     */
+    public function favoriteProducts()
+    {
+        return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
+    }
+
+    /**
      * Check if user is admin
      */
     public function isAdmin(): bool

@@ -1,9 +1,10 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import { useFavorites } from '../context/FavoritesContext'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import logoGlointPlace from '../assets/logos/logo.png';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   ShoppingCartIcon,
   UserIcon,
@@ -15,15 +16,25 @@ import {
   ArrowRightOnRectangleIcon,
   UserPlusIcon,
   ClipboardDocumentListIcon,
-  SparklesIcon
+  SparklesIcon,
+  HeartIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline'
+import api from '../services/api'
 
 export default function Layout() {
   const { user, logout } = useAuth()
   const { getItemCount } = useCart()
+  const { favoriteCount } = useFavorites()
   const location = useLocation()
+  const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [allProducts, setAllProducts] = useState([])
+  const searchRef = useRef(null)
   
   // Obtener configuración del sitio (se actualiza automáticamente)
   const config = useSiteConfig()
@@ -116,8 +127,209 @@ export default function Layout() {
       setScrolled(window.scrollY > 20)
     }
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    
+    // Cargar productos para el buscador
+    fetchProducts()
+    
+    // Click fuera del buscador para cerrar resultados
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [])
+
+  // Búsqueda inteligente y robusta usando API con tags
+  useEffect(() => {
+    if (searchTerm.trim().length > 0) {
+      // Debounce para evitar demasiadas peticiones
+      const delaySearch = setTimeout(async () => {
+        try {
+          const response = await api.get('/search/products', {
+            params: { q: searchTerm }
+          })
+          setSearchResults(response.data.slice(0, 8))
+          setShowSearchResults(true)
+        } catch (error) {
+          console.error('Error en búsqueda:', error)
+          // Fallback a búsqueda local si falla la API
+          performLocalSearch()
+        }
+      }, 300) // Esperar 300ms después de que el usuario deje de escribir
+
+      return () => clearTimeout(delaySearch)
+    } else {
+      setSearchResults([])
+      setShowSearchResults(false)
+    }
+  }, [searchTerm])
+
+  // Búsqueda local como fallback (mejorada con normalización y sinónimos)
+  const performLocalSearch = () => {
+    const normalizeText = (text) => {
+      if (!text) return ''
+      return text.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Quitar tildes
+        .replace(/[^a-z0-9\s]/g, '') // Quitar caracteres especiales
+        .replace(/\s+/g, ' ').trim() // Normalizar espacios
+    }
+
+    const searchLower = normalizeText(searchTerm)
+    
+    // Diccionario de sinónimos
+    const synonyms = {
+      'deportivo': ['deporte', 'sport', 'running', 'gym', 'fitness', 'atletico'],
+      'casual': ['informal', 'comodo', 'diario'],
+      'elegante': ['formal', 'fino', 'luxury', 'premium'],
+      'economico': ['barato', 'oferta', 'descuento', 'rebaja'],
+      'nuevo': ['novedad', 'reciente', 'new'],
+      'verano': ['calor', 'playa', 'summer'],
+      'invierno': ['frio', 'abrigado', 'winter'],
+      'hombre': ['masculino', 'caballero', 'men'],
+      'mujer': ['femenino', 'dama', 'women'],
+      'negro': ['black', 'oscuro'],
+      'blanco': ['white', 'claro'],
+      'rojo': ['red'],
+      'azul': ['blue', 'marino'],
+      'verde': ['green'],
+      'cuero': ['piel', 'leather'],
+      'algodon': ['cotton'],
+      'impermeable': ['waterproof'],
+      'ligero': ['light', 'liviano']
+    }
+
+    // Expandir búsqueda con sinónimos
+    const searchWords = searchLower.split(' ')
+    let expandedTerms = [...searchWords]
+    
+    searchWords.forEach(word => {
+      Object.entries(synonyms).forEach(([key, values]) => {
+        if (word === key || values.includes(word)) {
+          expandedTerms.push(key, ...values)
+        }
+      })
+    })
+    expandedTerms = [...new Set(expandedTerms)]
+
+    const calculateSimilarity = (str1, str2) => {
+      const longer = str1.length > str2.length ? str1 : str2
+      const shorter = str1.length > str2.length ? str2 : str1
+      if (longer.length === 0) return 1.0
+      
+      const editDistance = (s1, s2) => {
+        const costs = []
+        for (let i = 0; i <= s1.length; i++) {
+          let lastValue = i
+          for (let j = 0; j <= s2.length; j++) {
+            if (i === 0) costs[j] = j
+            else if (j > 0) {
+              let newValue = costs[j - 1]
+              if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
+              costs[j - 1] = lastValue
+              lastValue = newValue
+            }
+          }
+          if (i > 0) costs[s2.length] = lastValue
+        }
+        return costs[s2.length]
+      }
+      
+      const distance = editDistance(shorter, longer)
+      return (longer.length - distance) / longer.length
+    }
+    
+    const calculateRelevance = (product) => {
+      let score = 0
+      const productName = normalizeText(product.name)
+      const productDesc = normalizeText(product.description || '')
+      const categoryName = normalizeText(product.category?.name || '')
+      const tags = product.tags?.map(t => normalizeText(t.name)) || []
+      
+      // Búsqueda exacta en nombre
+      if (productName === searchLower) score += 100
+      if (productName.startsWith(searchLower)) score += 80
+      if (productName.includes(searchLower)) score += 50
+      
+      // Búsqueda en tags (alta prioridad)
+      tags.forEach(tag => {
+        if (tag === searchLower) score += 90
+        if (tag.includes(searchLower)) score += 60
+        
+        // Búsqueda por palabras en tags
+        searchWords.forEach(word => {
+          if (word.length > 2 && tag.includes(word)) score += 40
+        })
+        
+        // Búsqueda con sinónimos en tags
+        expandedTerms.forEach(term => {
+          if (term.length > 2 && tag.includes(term)) score += 35
+        })
+        
+        // Similitud difusa en tags
+        const tagSimilarity = calculateSimilarity(searchLower, tag)
+        if (tagSimilarity > 0.7) score += tagSimilarity * 35
+      })
+      
+      // Búsqueda por palabras individuales
+      searchWords.forEach(word => {
+        if (word.length > 2) {
+          if (productName.includes(word)) score += 30
+          if (productDesc.includes(word)) score += 15
+          if (categoryName.includes(word)) score += 25
+        }
+      })
+      
+      // Búsqueda con términos expandidos (sinónimos)
+      expandedTerms.forEach(term => {
+        if (term.length > 2) {
+          if (productName.includes(term)) score += 25
+          if (productDesc.includes(term)) score += 12
+          if (categoryName.includes(term)) score += 20
+        }
+      })
+      
+      // Categoría
+      if (categoryName === searchLower) score += 70
+      if (categoryName.includes(searchLower)) score += 35
+      
+      // Descripción
+      if (productDesc.includes(searchLower)) score += 20
+      
+      // Búsqueda difusa en nombre
+      const similarity = calculateSimilarity(searchLower, productName)
+      if (similarity > 0.7) score += similarity * 40
+      
+      return score
+    }
+    
+    const results = allProducts
+      .map(product => ({
+        ...product,
+        relevance: calculateRelevance(product)
+      }))
+      .filter(product => product.relevance > 0)
+      .sort((a, b) => b.relevance - a.relevance)
+      .slice(0, 8)
+    
+    setSearchResults(results)
+    setShowSearchResults(true)
+  }
+
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get('/products')
+      setAllProducts(response.data)
+    } catch (error) {
+      console.error('Error al cargar productos:', error)
+    }
+  }
 
   useEffect(() => {
     setMobileMenuOpen(false)
@@ -133,17 +345,27 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Header con fondo animado igual que el login */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navbar.borderBottom ? 'border-b border-white/10' : ''}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navbar.borderBottom ? 'border-b border-white/10' : ''} bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900`}
         style={{
-          background: scrolled && navbar.blur
-            ? `${navbar.backgroundColor}f5`
-            : navbar.backgroundColor,
           backdropFilter: scrolled && navbar.blur ? 'blur(12px)' : 'none',
           boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.2)' : '0 4px 15px rgba(0, 0, 0, 0.1)'
         }}
       >
+        {/* Fondo animado de la navbar */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Círculos animados con blur */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400 rounded-full opacity-10 blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400 rounded-full opacity-10 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-teal-400 rounded-full opacity-8 blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
+        
+        {/* Iconos flotantes decorativos en navbar */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <ShoppingBagIcon className="absolute top-4 left-20 w-8 h-8 text-cyan-300 opacity-30 animate-float" />
+          <SparklesIcon className="absolute top-4 right-40 w-6 h-6 text-lime-300 opacity-30 animate-float" style={{ animationDelay: '1s' }} />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -198,8 +420,166 @@ export default function Layout() {
               ))}
             </nav>
 
+            {/* Search Bar - Desktop */}
+            <div ref={searchRef} className="hidden lg:flex items-center flex-1 max-w-md mx-4 relative">
+              <div className="relative w-full">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all"
+                  onFocus={() => {
+                    if (searchTerm) setShowSearchResults(true)
+                  }}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => {
+                      setSearchTerm('')
+                      setShowSearchResults(false)
+                    }}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Search Results Dropdown */}
+              {showSearchResults && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[9999]">
+                  <div className="p-2 bg-gray-50 border-b border-gray-100">
+                    <p className="text-xs font-semibold text-gray-700">
+                      {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto scrollbar-thin">
+                    {searchResults.map((product) => (
+                      <Link
+                        key={product.id}
+                        to={`/product/${product.id}/parallax`}
+                        onClick={() => {
+                          setShowSearchResults(false)
+                          setSearchTerm('')
+                          setMobileMenuOpen(false)
+                        }}
+                        className="flex items-start gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      >
+                        <img
+                          src={product.images?.[0]?.image_url || 'https://via.placeholder.com/60'}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded-lg shadow-sm flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">
+                            {product.name}
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-2">
+                            {product.category?.name || 'Sin categoría'}
+                          </p>
+                          {/* Mostrar tags si existen */}
+                          {product.tags && product.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {product.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag.id}
+                                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800"
+                                >
+                                  {tag.name}
+                                </span>
+                              ))}
+                              {product.tags.length > 3 && (
+                                <span className="text-xs text-gray-400">
+                                  +{product.tags.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div 
+                            className="text-lg font-black"
+                            style={{ color: colors.primary.hex }}
+                          >
+                            ${parseFloat(product.price).toFixed(2)}
+                          </div>
+                          {product.stock < 10 && product.stock > 0 && (
+                            <div className="text-xs text-orange-600 font-medium">
+                              {product.stock} unid.
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="p-2 bg-gray-50 border-t border-gray-100">
+                    <Link
+                      to="/products"
+                      onClick={() => {
+                        setShowSearchResults(false)
+                        setSearchTerm('')
+                      }}
+                      className="block text-center text-sm font-bold transition-colors hover:underline"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Ver todos los productos →
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* No Results */}
+              {showSearchResults && searchTerm && searchResults.length === 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 p-6 text-center z-[9999]">
+                  <MagnifyingGlassIcon className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-600 font-medium text-sm mb-1">
+                    No encontramos "{searchTerm}"
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Intenta con otras palabras
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* User Actions */}
             <div className="flex items-center space-x-3">
+              {/* Favorites */}
+              {user && (
+                <Link
+                  to="/favorites"
+                  className="relative group"
+                >
+                  <div 
+                    className="relative p-2 rounded-full transition-colors"
+                    style={{ 
+                      '--hover-bg': `${colors.primary.hex}10`
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${colors.primary.hex}10`}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <HeartIcon 
+                      className="h-6 w-6 text-white transition-colors"
+                    />
+                    {favoriteCount > 0 && (
+                      <span 
+                        className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg"
+                        style={{ 
+                          background: colors.secondary.hex,
+                          boxShadow: `0 0 15px ${colors.secondary.hex}`
+                        }}
+                      >
+                        {favoriteCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              )}
+              
               {/* Cart */}
               <Link
                 to="/cart"
@@ -351,6 +731,25 @@ export default function Layout() {
                   >
                     <ClipboardDocumentListIcon className="h-5 w-5" />
                     <span className="font-medium">Mis Órdenes</span>
+                  </Link>
+
+                  <Link
+                    to="/favorites"
+                    className="flex items-center space-x-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white rounded-xl transition-all relative"
+                  >
+                    <HeartIcon className="h-5 w-5" />
+                    <span className="font-medium">Mis Favoritos</span>
+                    {favoriteCount > 0 && (
+                      <span 
+                        className="ml-auto text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg"
+                        style={{ 
+                          background: colors.secondary.hex,
+                          boxShadow: `0 0 10px ${colors.secondary.hex}`
+                        }}
+                      >
+                        {favoriteCount}
+                      </span>
+                    )}
                   </Link>
 
                   <button
@@ -509,6 +908,15 @@ export default function Layout() {
                       style={{ backgroundColor: colors.primary.hex }}
                     ></span>
                     Mis Órdenes
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/track-order" className="text-gray-400 hover:text-white transition-colors flex items-center group">
+                    <span 
+                      className="w-0 group-hover:w-2 h-0.5 mr-0 group-hover:mr-2 transition-all"
+                      style={{ backgroundColor: colors.primary.hex }}
+                    ></span>
+                    Rastrear Pedido
                   </Link>
                 </li>
               </ul>

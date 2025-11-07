@@ -10,6 +10,7 @@ export default function Checkout() {
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isGuest, setIsGuest] = useState(false);
   
   const [formData, setFormData] = useState({
     customer_name: user?.name || '',
@@ -31,11 +32,7 @@ export default function Checkout() {
     );
   }
 
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
-
+  // Ya no redirigimos si no hay usuario, permitimos checkout como invitado
   if (cart.length === 0) {
     navigate('/cart');
     return null;
@@ -52,14 +49,24 @@ export default function Checkout() {
         items: cart.map(item => ({
           product_id: item.id,
           quantity: item.quantity
-        }))
+        })),
+        is_guest: !user
       };
 
-      const response = await api.post('/orders', orderData);
+      // Usar endpoint diferente según si es invitado o usuario autenticado
+      const endpoint = user ? '/orders' : '/orders/guest';
+      const response = await api.post(endpoint, orderData);
       
       clearCart();
-      alert('¡Orden creada exitosamente!');
-      navigate('/orders');
+      
+      // Si es invitado, mostrar el token de rastreo
+      if (!user && response.data.guest_token) {
+        alert(`¡Orden creada exitosamente!\n\nCódigo de rastreo: ${response.data.guest_token}\n\nGuarda este código para rastrear tu pedido.\nTambién te enviamos un email a ${formData.customer_email}`);
+        navigate('/');
+      } else {
+        alert('¡Orden creada exitosamente!');
+        navigate('/orders');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Error al crear la orden');
     } finally {
@@ -88,6 +95,30 @@ export default function Checkout() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900">Datos de Envío</h2>
             </div>
+
+            {/* Mensaje para invitados */}
+            {!user && (
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="font-semibold text-blue-900 mb-1">Compra como invitado</p>
+                    <p className="text-sm text-blue-700">
+                      No necesitas crear una cuenta. Te enviaremos un código para rastrear tu pedido.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/login')}
+                      className="text-sm font-semibold text-blue-600 hover:text-blue-800 underline mt-2"
+                    >
+                      ¿Ya tienes cuenta? Inicia sesión aquí
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {error && (
               <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-start">
