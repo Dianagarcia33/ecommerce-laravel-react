@@ -193,11 +193,13 @@ export default function HeroSection({
           <div className="space-y-6 order-1 lg:order-2 relative">
             
             {loading ? (
-              <div className="space-y-4">
-                <div className="aspect-[4/3] rounded-3xl bg-gray-200 animate-pulse" />
-                <div className="grid grid-cols-3 gap-4">
+              <div className="flex gap-4">
+                {/* Skeleton del producto grande a la izquierda */}
+                <div className="flex-[3] aspect-[4/3] rounded-3xl bg-gray-200 animate-pulse" />
+                {/* Skeleton de productos pequeños en columna a la derecha */}
+                <div className="flex-1 flex flex-col gap-4">
                   {[1, 2, 3].map((item) => (
-                    <div key={item} className="aspect-square rounded-2xl bg-gray-200 animate-pulse" />
+                    <div key={item} className="aspect-[4/3] rounded-2xl bg-gray-200 animate-pulse" />
                   ))}
                 </div>
               </div>
@@ -206,10 +208,10 @@ export default function HeroSection({
                 {/* Layout: Producto grande a la izquierda, productos pequeños en columna a la derecha */}
                 <div className="flex gap-4">
                   {/* Producto principal (grande) - LADO IZQUIERDO */}
-                  <div className="relative group overflow-hidden rounded-3xl flex-[3]">
-                    {/* Badge flotante de destacado */}
+                  <div className="relative group rounded-3xl flex-[3]">
+                    {/* Badge flotante de destacado - FUERA DEL OVERFLOW */}
                     <div 
-                      className="absolute -top-3 -left-3 z-20 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
+                      className="absolute -top-3 -left-3 z-30 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
                       style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
                     >
                       ⭐ Destacado
@@ -217,7 +219,7 @@ export default function HeroSection({
 
                     <Link 
                       to={`/product/${displayedProducts[0].id}/parallax`}
-                      className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white"
+                      className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white rounded-3xl"
                     >
                       <img
                         src={displayedProducts[0].images?.[0]?.image_url || '/placeholder-product.jpg'}

@@ -1,0 +1,11 @@
+export { default as HeroSection } from './HeroSection';
+export { default as FeaturesBar } from './FeaturesBar';
+export { default as CategoriesSection } from './CategoriesSection';
+export { default as CategoriesWrapper } from './CategoriesWrapper';
+export { default as ProductsGrid } from './ProductsGrid';
+export { default as ProductCard } from './ProductCard';
+export { default as TrendingSection } from './TrendingSection';
+export { default as NewProductsSection } from './NewProductsSection';
+export { default as FavoritesSection } from './FavoritesSection';
+export { default as RecentlyViewedSection } from './RecentlyViewedSection';
+export { default as SearchBar } from './SearchBar';
