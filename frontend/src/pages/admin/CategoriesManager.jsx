@@ -67,10 +67,11 @@ export default function CategoriesManager() {
     if (editingCategory) {
       return {
         name: editingCategory.name,
-        description: editingCategory.description
+        description: editingCategory.description,
+        image_url: editingCategory.image_url
       };
     }
-    return { name: '', description: '' };
+    return { name: '', description: '', image_url: '' };
   };
 
   // Render loading state

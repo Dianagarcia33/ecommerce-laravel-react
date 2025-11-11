@@ -26,7 +26,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
-            'image' => 'required|string',
+            'image' => 'required|image',
         ]);
 
         // Generar slug automáticamente
@@ -68,7 +68,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255|unique:categories,name,' . $id,
             'description' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image',
         ]);
 
         // Generar slug si se actualiza el nombre
