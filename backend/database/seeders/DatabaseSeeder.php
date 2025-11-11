@@ -25,19 +25,22 @@ class DatabaseSeeder extends Seeder
         $electronica = Category::create([
             'name' => 'Electrónica',
             'slug' => 'electronica',
-            'description' => 'Dispositivos y gadgets electrónicos'
+            'description' => 'Dispositivos y gadgets electrónicos',
+            'image_url' => 'categories/electronica.jpg',
         ]);
 
         $ropa = Category::create([
             'name' => 'Ropa',
             'slug' => 'ropa',
-            'description' => 'Ropa y accesorios de moda'
+            'description' => 'Ropa y accesorios de moda',
+            'image_url' => 'categories/ropa.jpg',
         ]);
 
         $hogar = Category::create([
             'name' => 'Hogar',
             'slug' => 'hogar',
-            'description' => 'Artículos para el hogar'
+            'description' => 'Artículos para el hogar',
+            'image_url' => 'categories/hogar.jpg',
         ]);
 
         // Crear productos de Electrónica

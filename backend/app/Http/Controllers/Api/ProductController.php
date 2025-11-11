@@ -36,7 +36,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'images.*' => 'required|image|max:2048',
+            'images.*' => 'required|image',
         ]);
 
         // Generar slug automáticamente
@@ -94,7 +94,7 @@ class ProductController extends Controller
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'images.*' => 'nullable|image|max:2048',
+            'images.*' => 'nullable|image',
         ]);
 
         // Generar slug si se actualiza el nombre
