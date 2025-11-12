@@ -36,14 +36,21 @@ export const useCategoriesManager = () => {
 
     try {
       setLoading(true);
+
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('description', formData.description || '');
+      if (formData.image instanceof File){
+        data.append('image', formData.image);
+      }
+
       const response = await fetch(`${API_BASE_URL}/categories`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: data,
       });
 
       if (!response.ok) {
@@ -65,14 +72,24 @@ export const useCategoriesManager = () => {
 
     try {
       setLoading(true);
+      // Usar FormData aquí
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('description', formData.description || '');
+      if (formData.image instanceof File){
+        data.append('image', formData.image);
+      }
+
+      // Método PUT usando FormData con _method
+      data.append('_method', 'PUT');
+
       const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: data,
       });
 
       if (!response.ok) {
