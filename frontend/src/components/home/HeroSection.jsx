@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { 
-  ShoppingBagIcon, 
+import {
+  ShoppingBagIcon,
   SparklesIcon,
   ArrowRightIcon,
   TagIcon,
@@ -15,7 +15,7 @@ import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 import { useFavorites } from '../../context/FavoritesContext'
 
-export default function HeroSection({ 
+export default function HeroSection({
   featuredProducts,
   loading
 }) {
@@ -23,18 +23,18 @@ export default function HeroSection({
   const { home, business, theme } = config
   const { colors } = theme
   const { toggleFavorite, isFavorite } = useFavorites()
-  
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
   // Auto-play: cambiar productos cada 4 segundos
   useEffect(() => {
     if (!isAutoPlaying || loading || featuredProducts.length === 0) return
-    
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % Math.max(1, Math.floor(featuredProducts.length / 4)))
     }, 4000)
-    
+
     return () => clearInterval(interval)
   }, [isAutoPlaying, loading, featuredProducts.length])
 
@@ -80,13 +80,13 @@ export default function HeroSection({
 
       <div className="relative w-full px-8 sm:px-12 lg:px-16 xl:px-24 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
+
           {/* COLUMNA IZQUIERDA - Contenido de texto */}
           <div className="space-y-8 text-left order-2 lg:order-1">
-            
+
             {/* Badge con estilo premium */}
             <div className="flex justify-start">
-              <div 
+              <div
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 text-sm font-bold shadow-lg transform hover:scale-105 transition-all cursor-default bg-white"
                 style={{
                   borderColor: colors.primary.hex,
@@ -101,7 +101,7 @@ export default function HeroSection({
             {/* Features en una sola fila - ARRIBA DEL TÍTULO */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div 
+                <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
                   style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
                 >
@@ -112,9 +112,9 @@ export default function HeroSection({
                   <p className="text-xs text-gray-300">Entregas en 24-48h</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div 
+                <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
                   style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
                 >
@@ -125,9 +125,9 @@ export default function HeroSection({
                   <p className="text-xs text-gray-300">Protección garantizada</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div 
+                <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
                   style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
                 >
@@ -146,7 +146,7 @@ export default function HeroSection({
                 <span className="block text-white">
                   {home.hero.title.split(' ').slice(0, 2).join(' ')}
                 </span>
-                <span 
+                <span
                   className="block bg-gradient-to-r bg-clip-text text-transparent mt-2"
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${colors.secondary.hex}, #fef08a)`
@@ -155,7 +155,7 @@ export default function HeroSection({
                   {home.hero.title.split(' ').slice(2).join(' ')}
                 </span>
               </h1>
-              
+
               <p className="text-xl lg:text-2xl text-gray-200 font-normal max-w-xl leading-relaxed">
                 {home.hero.subtitle}
               </p>
@@ -163,7 +163,7 @@ export default function HeroSection({
 
             {/* Botones de acción */}
             <div className="flex flex-wrap gap-4 pt-6">
-              <Link 
+              <Link
                 to="/products"
                 className="group relative px-10 py-5 rounded-2xl font-bold text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden text-lg"
                 style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
@@ -176,10 +176,10 @@ export default function HeroSection({
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </Link>
 
-              <Link 
+              <Link
                 to="/products"
                 className="px-10 py-5 rounded-2xl font-bold border-2 bg-white hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg text-lg"
-                style={{ 
+                style={{
                   borderColor: colors.primary.hex,
                   color: colors.primary.hex
                 }}
@@ -191,7 +191,7 @@ export default function HeroSection({
 
           {/* COLUMNA DERECHA - Galería de productos con carrusel */}
           <div className="space-y-6 order-1 lg:order-2 relative">
-            
+
             {loading ? (
               <div className="flex gap-4">
                 {/* Skeleton del producto grande a la izquierda */}
@@ -208,31 +208,51 @@ export default function HeroSection({
                 {/* Layout: Producto grande a la izquierda, productos pequeños en columna a la derecha */}
                 <div className="flex gap-4">
                   {/* Producto principal (grande) - LADO IZQUIERDO */}
-                  <div className="relative group rounded-3xl flex-[3]">
-                    {/* Badge flotante de destacado - FUERA DEL OVERFLOW */}
-                    <div 
+                  <div className="relative rounded-3xl flex-[3]">
+                    {/* Badge flotante */}
+                    <div
                       className="absolute -top-3 -left-3 z-30 px-4 py-2 rounded-full font-bold text-white shadow-xl text-sm"
                       style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
                     >
                       ⭐ Destacado
                     </div>
 
-                    <Link 
+                    {/* TODO el bloque ahora es parte del hover */}
+                    <Link
                       to={`/product/${displayedProducts[0].id}/parallax`}
-                      className="block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white rounded-3xl"
+                      className="group relative block aspect-[4/3] overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 ring-4 ring-white rounded-3xl"
                     >
+                      {/* Imagen principal */}
                       <img
                         src={displayedProducts[0].images?.[0]?.image_url || '/placeholder-product.jpg'}
                         alt={displayedProducts[0].name}
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                       />
+
+                      {/* Capa oscura */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                      {/* Precio destacado */}
+                      <div
+                        className="absolute bottom-4 left-4 z-10 px-6 py-3 rounded-2xl font-black text-white shadow-xl text-2xl"
+                        style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
+                      >
+                        ${displayedProducts[0].price}
+                      </div>
+
+                      {/* Info que aparece al hacer hover */}
+                      <div className="absolute inset-x-0 bottom-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black via-black/90 to-transparent">
+                        <h3 className="font-bold text-2xl mb-2">{displayedProducts[0].name}</h3>
+                        <p className="text-sm text-gray-200 line-clamp-2">
+                          {displayedProducts[0].description || 'Producto de alta calidad con garantía'}
+                        </p>
+                      </div>
                     </Link>
-                    
-                    {/* Favorito en producto principal */}
+
+                    {/* Botón de favorito */}
                     <button
                       onClick={() => toggleFavorite(displayedProducts[0].id)}
-                      className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white shadow-xl transition-all hover:scale-110"
+                      className="absolute top-4 right-4 z-20 p-3 rounded-full bg-white shadow-xl transition-all hover:scale-110"
                     >
                       {isFavorite(displayedProducts[0].id) ? (
                         <HeartSolid className="w-6 h-6 text-red-500" />
@@ -240,23 +260,8 @@ export default function HeroSection({
                         <HeartIcon className="w-6 h-6 text-gray-700" />
                       )}
                     </button>
-
-                    {/* Precio destacado */}
-                    <div 
-                      className="absolute bottom-4 left-4 z-10 px-6 py-3 rounded-2xl font-black text-white shadow-xl text-2xl"
-                      style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
-                    >
-                      ${displayedProducts[0].price}
-                    </div>
-
-                    {/* Info del producto principal - aparece en hover */}
-                    <div className="absolute inset-x-0 bottom-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black via-black/90 to-transparent">
-                      <h3 className="font-bold text-2xl mb-2">{displayedProducts[0].name}</h3>
-                      <p className="text-sm text-gray-200 line-clamp-2">
-                        {displayedProducts[0].description || 'Producto de alta calidad con garantía'}
-                      </p>
-                    </div>
                   </div>
+
 
                   {/* Productos pequeños (columna vertical) - LADO DERECHO */}
                   {displayedProducts.length > 1 && (
@@ -275,7 +280,7 @@ export default function HeroSection({
                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                             <div className="absolute bottom-0 left-0 right-0 p-3">
                               <p className="text-white text-xs font-bold truncate mb-1">{product.name}</p>
-                              <p 
+                              <p
                                 className="text-sm font-black"
                                 style={{ color: colors.primary.hex }}
                               >
@@ -316,9 +321,8 @@ export default function HeroSection({
                             setCurrentIndex(idx)
                             setIsAutoPlaying(false)
                           }}
-                          className={`h-2.5 rounded-full transition-all shadow-md ${
-                            idx === currentIndex ? 'w-12' : 'w-2.5'
-                          }`}
+                          className={`h-2.5 rounded-full transition-all shadow-md ${idx === currentIndex ? 'w-12' : 'w-2.5'
+                            }`}
                           style={{
                             backgroundColor: idx === currentIndex ? colors.primary.hex : '#d1d5db'
                           }}

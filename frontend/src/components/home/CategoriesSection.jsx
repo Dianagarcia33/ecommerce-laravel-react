@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { 
+import {
   ComputerDesktopIcon,
   DevicePhoneMobileIcon,
   HomeIcon as HomeIconOutline,
@@ -24,7 +24,7 @@ import { useSiteConfig } from '../../hooks/useSiteConfig'
 // Mapeo de iconos por categoría
 const getIconForCategory = (categoryName) => {
   const name = categoryName.toLowerCase()
-  
+
   if (name.includes('electr') || name.includes('tecnolog')) return ComputerDesktopIcon
   if (name.includes('móvil') || name.includes('celular') || name.includes('teléfono')) return DevicePhoneMobileIcon
   if (name.includes('hogar') || name.includes('casa')) return HomeIconOutline
@@ -38,7 +38,7 @@ const getIconForCategory = (categoryName) => {
   if (name.includes('comida') || name.includes('alimento')) return CakeIcon
   if (name.includes('juguete') || name.includes('niño')) return CubeIcon
   if (name.includes('moda') || name.includes('ropa')) return SparklesIcon
-  
+
   // Icono por defecto
   return ShoppingBagIcon
 }
@@ -62,19 +62,19 @@ export default function CategoriesSection({ categories = [], loading = false }) 
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  
+
   // Número de categorías visibles por slide (4 en desktop, 2 en mobile)
   const categoriesPerSlide = 8
   const totalSlides = Math.max(1, Math.ceil(categories.length / categoriesPerSlide))
-  
+
   // Auto-play: cambiar cada 5 segundos
   useEffect(() => {
     if (!isAutoPlaying || loading || categories.length <= categoriesPerSlide) return
-    
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % totalSlides)
     }, 5000)
-    
+
     return () => clearInterval(interval)
   }, [isAutoPlaying, loading, categories.length, totalSlides, categoriesPerSlide])
 
@@ -103,9 +103,9 @@ export default function CategoriesSection({ categories = [], loading = false }) 
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4">
             Explora por{' '}
-            <span 
+            <span
               className="bg-gradient-to-r bg-clip-text text-transparent"
-              style={{ 
+              style={{
                 backgroundImage: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
               }}
             >
@@ -132,36 +132,54 @@ export default function CategoriesSection({ categories = [], loading = false }) 
           <div className="relative">
             {/* Grid de categorías */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {displayedCategories.map((category, index) => {
-                const Icon = getIconForCategory(category.name)
-                const colorGradient = colorGradients[index % colorGradients.length]
-                
+              {displayedCategories.map((category) => {
+                const imageUrl =
+                  category.image_url ||
+                  (category.image ? `http://localhost:8000/storage/categories/${category.image}` : 'https://via.placeholder.com/400');
+
+
                 return (
                   <Link
                     key={category.id}
                     to={`/products?category=${category.id}`}
-                    className="group relative overflow-hidden rounded-2xl p-8 bg-white border-2 border-gray-100 hover:border-transparent hover:shadow-2xl transition-all duration-300"
+                    className="group relative block"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${colorGradient} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                    <div className="relative z-10 text-center space-y-4">
-                      <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${colorGradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                        <Icon className="w-8 h-8 text-white" />
+                    <div className="relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2">
+                      {/* Imagen de categoría */}
+                      <div className="aspect-square overflow-hidden bg-gray-100 relative rounded-3xl shadow-lg">
+                        {/* Imagen */}
+                        <img
+                          src={imageUrl}
+                          alt={category.name}
+                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-250"
+                        />
+
+                        {/* Overlay oscuro con degradado */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        {/* Contenido al hacer hover */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <h3 className="text-sm sm:text-base font-bold truncate mb-1">{category.name}</h3>
+                          <p className="text-xs sm:text-sm text-gray-200">
+                            {category.products_count || 0} producto{category.products_count !== 1 ? 's' : ''}
+                          </p>
+                          <div
+                            className="flex items-center gap-2 text-xs font-semibold mt-2"
+                            style={{ color: colors.primary.hex }}
+                          >
+                            Ver todo
+                            <ArrowRightIcon className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-bold text-gray-900 mb-1">{category.name}</h3>
-                        <p className="text-sm text-gray-500">
-                          {category.products_count || 0} producto{category.products_count !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: colors.primary.hex }}>
-                        Ver todo
-                        <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
+
                     </div>
                   </Link>
                 )
               })}
             </div>
+
+
 
             {/* Controles del carrusel - Solo si hay más de 8 categorías */}
             {categories.length > categoriesPerSlide && (
