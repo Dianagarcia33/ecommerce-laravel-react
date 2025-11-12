@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Reviews (protegidas - crear, editar, eliminar)
     Route::post('/products/{productId}/reviews', [ReviewController::class, 'store']);
     Route::get('/products/{productId}/reviews/user', [ReviewController::class, 'getUserReview']);
+    Route::get('/products/{productId}/reviews/can-review', [ReviewController::class, 'canReview']);
     Route::put('/reviews/{reviewId}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{reviewId}', [ReviewController::class, 'destroy']);
 });

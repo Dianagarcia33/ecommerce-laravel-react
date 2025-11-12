@@ -41,6 +41,11 @@ export default function ProductLandingParallax() {
   })
   const [loadingReviews, setLoadingReviews] = useState(true)
 
+  // Scroll to top when component mounts or product changes
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [id])
+
   useEffect(() => {
     fetchProduct()
     fetchReviews()

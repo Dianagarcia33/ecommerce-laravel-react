@@ -25,6 +25,7 @@ class ReviewController extends Controller
                     'rating' => $review->rating,
                     'title' => $review->title,
                     'comment' => $review->comment,
+                    'images' => $review->images ?? [], // Incluir imágenes
                     'verified_purchase' => $review->verified_purchase,
                     'user_name' => $review->user->name,
                     'created_at' => $review->created_at->format('d/m/Y'),
@@ -51,10 +52,21 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'title' => 'nullable|string|max:255',
             'comment' => 'required|string|min:10|max:1000',
+            'images' => 'nullable|array|max:5', // Máximo 5 imágenes
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120', // Máximo 5MB por imagen
         ]);
 
         // Verificar que el producto existe
         $product = Product::findOrFail($productId);
+
+        // Verificar que el usuario haya comprado el producto
+        $hasPurchased = $this->checkVerifiedPurchase(Auth::id(), $productId);
+        
+        if (!$hasPurchased) {
+            return response()->json([
+                'message' => 'Solo puedes dejar una reseña si has comprado este producto'
+            ], 403);
+        }
 
         // Verificar que el usuario no haya dejado ya una reseña
         $existingReview = Review::where('product_id', $productId)
@@ -67,8 +79,17 @@ class ReviewController extends Controller
             ], 422);
         }
 
-        // Verificar si es compra verificada
-        $verifiedPurchase = $this->checkVerifiedPurchase(Auth::id(), $productId);
+        // Como ya verificamos la compra, es siempre verificada
+        $verifiedPurchase = true;
+
+        // Procesar imágenes si existen
+        $imageUrls = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('reviews', 'public');
+                $imageUrls[] = '/storage/' . $path;
+            }
+        }
 
         $review = Review::create([
             'product_id' => $productId,
@@ -76,6 +97,7 @@ class ReviewController extends Controller
             'rating' => $request->rating,
             'title' => $request->title,
             'comment' => $request->comment,
+            'images' => $imageUrls, // Guardar array de URLs
             'verified_purchase' => $verifiedPurchase,
             'is_approved' => true,
         ]);
@@ -87,6 +109,7 @@ class ReviewController extends Controller
                 'rating' => $review->rating,
                 'title' => $review->title,
                 'comment' => $review->comment,
+                'images' => $review->images,
                 'verified_purchase' => $review->verified_purchase,
                 'user_name' => Auth::user()->name,
                 'created_at' => $review->created_at->format('d/m/Y'),
@@ -203,6 +226,44 @@ class ReviewController extends Controller
                 'verified_purchase' => $review->verified_purchase,
                 'created_at' => $review->created_at->format('d/m/Y'),
             ]
+        ]);
+    }
+
+    /**
+     * Check if user can review this product
+     */
+    public function canReview($productId)
+    {
+        // Verificar que el producto existe
+        $product = Product::findOrFail($productId);
+
+        // Verificar si el usuario ya dejó una reseña
+        $existingReview = Review::where('product_id', $productId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($existingReview) {
+            return response()->json([
+                'can_review' => false,
+                'reason' => 'already_reviewed',
+                'message' => 'Ya has dejado una reseña para este producto'
+            ]);
+        }
+
+        // Verificar si el usuario ha comprado el producto
+        $hasPurchased = $this->checkVerifiedPurchase(Auth::id(), $productId);
+
+        if (!$hasPurchased) {
+            return response()->json([
+                'can_review' => false,
+                'reason' => 'not_purchased',
+                'message' => 'Solo puedes dejar una reseña si has comprado este producto'
+            ]);
+        }
+
+        return response()->json([
+            'can_review' => true,
+            'message' => 'Puedes dejar una reseña'
         ]);
     }
 }

@@ -15,6 +15,7 @@ class Review extends Model
         'rating',
         'title',
         'comment',
+        'images', // Agregar images
         'verified_purchase',
         'is_approved'
     ];
@@ -22,7 +23,8 @@ class Review extends Model
     protected $casts = [
         'verified_purchase' => 'boolean',
         'is_approved' => 'boolean',
-        'rating' => 'integer'
+        'rating' => 'integer',
+        'images' => 'array' // Cast a array para JSON
     ];
 
     protected $with = ['user'];

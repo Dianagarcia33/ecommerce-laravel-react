@@ -194,6 +194,21 @@ export default function ReviewsCarousel({ reviews, averageRating, totalReviews }
                   {review.comment}
                 </p>
 
+                {/* Imágenes de la reseña */}
+                {review.images && review.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    {review.images.map((imageUrl, index) => (
+                      <img
+                        key={index}
+                        src={`${import.meta.env.VITE_API_BASE_URL}${imageUrl}`}
+                        alt={`Imagen ${index + 1} de la reseña`}
+                        className="w-full aspect-square object-cover rounded-lg border border-gray-200 hover:scale-105 transition-transform cursor-pointer"
+                        onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL}${imageUrl}`, '_blank')}
+                      />
+                    ))}
+                  </div>
+                )}
+
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div>

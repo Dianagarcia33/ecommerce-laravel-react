@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { StarIcon } from '@heroicons/react/24/solid'
-import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline'
+import { StarIcon as StarOutlineIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 import api from '../../services/api'
 
@@ -14,10 +14,51 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
     title: '',
     comment: ''
   })
+  const [images, setImages] = useState([]) // Array de archivos de imagen
+  const [imagePreviews, setImagePreviews] = useState([]) // Array de URLs de preview
   const [hoveredRating, setHoveredRating] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files)
+    
+    // Validar número máximo de imágenes
+    if (images.length + files.length > 5) {
+      setError('Puedes subir un máximo de 5 imágenes')
+      return
+    }
+
+    // Validar tamaño de cada imagen (máximo 5MB)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    const invalidFiles = files.filter(file => file.size > maxSize)
+    if (invalidFiles.length > 0) {
+      setError('Cada imagen debe pesar menos de 5MB')
+      return
+    }
+
+    // Crear previews
+    const newPreviews = []
+    files.forEach(file => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        newPreviews.push(reader.result)
+        if (newPreviews.length === files.length) {
+          setImagePreviews([...imagePreviews, ...newPreviews])
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+
+    setImages([...images, ...files])
+    setError('')
+  }
+
+  const removeImage = (index) => {
+    setImages(images.filter((_, i) => i !== index))
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -37,9 +78,27 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
     }
 
     try {
-      const response = await api.post(`/products/${productId}/reviews`, formData)
+      // Crear FormData para enviar archivos
+      const submitData = new FormData()
+      submitData.append('rating', formData.rating)
+      submitData.append('title', formData.title)
+      submitData.append('comment', formData.comment)
+      
+      // Agregar imágenes
+      images.forEach((image, index) => {
+        submitData.append(`images[${index}]`, image)
+      })
+
+      const response = await api.post(`/products/${productId}/reviews`, submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      
       setSuccess(true)
       setFormData({ rating: 0, title: '', comment: '' })
+      setImages([])
+      setImagePreviews([])
       
       if (onReviewSubmitted) {
         onReviewSubmitted(response.data.review)
@@ -155,6 +214,55 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
           <p className="text-sm text-gray-500 mt-2">
             {formData.comment.length}/1000 caracteres
           </p>
+        </div>
+
+        {/* Subir imágenes */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Imágenes (opcional - máximo 5)
+          </label>
+          
+          {/* Preview de imágenes */}
+          {imagePreviews.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-4">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative group aspect-square">
+                  <img
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover rounded-lg border-2 border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Botón para agregar imágenes */}
+          {images.length < 5 && (
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-all">
+              <PhotoIcon className="w-10 h-10 text-gray-400 mb-2" />
+              <span className="text-sm text-gray-500">
+                Haz clic para subir imágenes
+              </span>
+              <span className="text-xs text-gray-400 mt-1">
+                JPEG, PNG o WebP (máx. 5MB cada una)
+              </span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg,image/webp"
+                multiple
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+          )}
         </div>
 
         {/* Botón enviar */}

@@ -277,12 +277,13 @@ export default function Dashboard() {
     },
     {
       id: 'orders',
-      title: 'Órdenes',
-      description: 'Ver todas las órdenes de clientes',
+      title: 'Gestión de Órdenes',
+      description: 'Administrar y actualizar estado de órdenes',
       icon: ClipboardDocumentListIcon,
-      link: '/orders',
+      link: '/admin/orders',
       gradient: 'linear-gradient(135deg, #f59e0b, #ea580c)',
       stats: 'Ventas',
+      badge: 'Admin',
     },
     {
       id: 'users',

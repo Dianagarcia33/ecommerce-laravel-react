@@ -22,6 +22,7 @@ import HomeEditor from './pages/admin/HomeEditor'
 import UsersManager from './pages/admin/UsersManager'
 import EmailTemplates from './pages/admin/EmailTemplates'
 import NewsletterManager from './pages/admin/NewsletterManager'
+import OrdersManager from './pages/admin/OrdersManager'
 import Orders from './pages/Orders'
 import TrackOrder from './pages/TrackOrder'
 
@@ -54,6 +55,7 @@ function App() {
               <Route path="admin/users" element={<UsersManager />} />
               <Route path="admin/email-templates" element={<EmailTemplates />} />
               <Route path="admin/newsletter" element={<NewsletterManager />} />
+              <Route path="admin/orders" element={<OrdersManager />} />
             </Route>
           </Routes>
         </BrowserRouter>
