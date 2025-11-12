@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useCategoriesManager } from '../../hooks/useCategoriesManager';
 import CategoryForm from '../../components/admin/categories/CategoryForm';
-import CategoryGrid from '../../components/admin/categories/CategoryGrid';
+import CategoryTable from '../../components/admin/categories/CategoryTable';
 import CategoryEmptyState from '../../components/admin/categories/CategoryEmptyState';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorDisplay from '../../components/common/ErrorDisplay';
@@ -107,7 +107,7 @@ export default function CategoriesManager() {
         {categories.length === 0 ? (
           <CategoryEmptyState onCreateCategory={handleNewCategory} />
         ) : (
-          <CategoryGrid
+          <CategoryTable
             categories={categories}
             onEdit={handleEdit}
             onDelete={handleDelete}

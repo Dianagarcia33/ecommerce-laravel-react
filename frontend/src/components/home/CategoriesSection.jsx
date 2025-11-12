@@ -120,11 +120,23 @@ export default function CategoriesSection({ categories = [], loading = false }) 
         {loading ? (
           // Skeleton loading
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="rounded-2xl p-8 bg-gray-100 animate-pulse">
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-gray-200 mb-4" />
-                <div className="h-4 bg-gray-200 rounded mx-auto w-24 mb-2" />
-                <div className="h-3 bg-gray-200 rounded mx-auto w-16" />
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="relative rounded-3xl overflow-hidden bg-gray-200 animate-pulse shadow-md"
+              >
+                {/* Imagen simulada */}
+                <div className="aspect-square bg-gray-200 rounded-3xl" />
+
+                {/* Overlay degradado para simular el hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-3xl opacity-50" />
+
+                {/* Contenido (nombre + productos + botón) */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 text-white">
+                  <div className="h-4 bg-gray-100/80 rounded w-2/3 mb-2" />
+                  <div className="h-3 bg-gray-100/70 rounded w-1/3 mb-3" />
+                  <div className="h-3 bg-gray-100/60 rounded w-16" />
+                </div>
               </div>
             ))}
           </div>
