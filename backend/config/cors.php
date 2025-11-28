@@ -19,7 +19,14 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173', 'http://localhost:5174'],
+    'allowed_origins' => [
+        'http://localhost:5173', 
+        'http://localhost:5174',
+        'http://glointplace.com.co',
+        'https://glointplace.com.co',
+        'http://www.glointplace.com.co',
+        'https://www.glointplace.com.co'
+    ],
 
     'allowed_origins_patterns' => [],
 

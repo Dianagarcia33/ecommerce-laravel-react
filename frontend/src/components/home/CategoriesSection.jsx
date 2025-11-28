@@ -102,18 +102,10 @@ export default function CategoriesSection({ categories = [], loading = false }) 
       <div className="w-full px-8 sm:px-12 lg:px-16 xl:px-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4">
-            Explora por{' '}
-            <span
-              className="bg-gradient-to-r bg-clip-text text-transparent"
-              style={{
-                backgroundImage: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
-              }}
-            >
-              Categorías
-            </span>
+            {config.home.sections.categories.title}
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Encuentra exactamente lo que buscas navegando por nuestras categorías especializadas
+            {config.home.sections.categories.subtitle}
           </p>
         </div>
 

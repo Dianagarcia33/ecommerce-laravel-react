@@ -33,14 +33,18 @@ export const getStatusColor = (status) => {
   };
 };
 
-export const getStatusText = (status) => {
-  const texts = {
-    pending: 'Pendiente',
-    processing: 'Procesando',
-    completed: 'Completada',
-    cancelled: 'Cancelada'
-  };
-  return texts[status] || status;
+export const getStatusText = (status, config) => {
+  if (!config || !config.orders || !config.orders.statusLabels) {
+    // Fallback si no hay config
+    const texts = {
+      pending: 'Pendiente',
+      processing: 'Procesando',
+      completed: 'Completada',
+      cancelled: 'Cancelada'
+    };
+    return texts[status] || status;
+  }
+  return config.orders.statusLabels[status] || status;
 };
 
 export const getStatusIcon = (status) => {

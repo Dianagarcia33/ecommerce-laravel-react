@@ -2,24 +2,23 @@ import { FunnelIcon } from '@heroicons/react/24/outline'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 
 export default function CategoryFilter({ categories, selectedCategory, setSelectedCategory }) {
-  const { theme } = useSiteConfig()
+  const { theme, products } = useSiteConfig()
   const { colors } = theme
 
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2 text-gray-600 font-medium">
         <FunnelIcon className="w-5 h-5" />
-        <span>Filtrar:</span>
+        <span>{products.filterLabel}</span>
       </div>
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setSelectedCategory(null)}
-          className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
-            !selectedCategory
+          className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${!selectedCategory
               ? 'text-white shadow-lg'
               : 'bg-white text-gray-700 border-2 border-gray-200'
-          }`}
-          style={!selectedCategory ? { 
+            }`}
+          style={!selectedCategory ? {
             background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`
           } : {}}
           onMouseEnter={(e) => {
@@ -33,18 +32,17 @@ export default function CategoryFilter({ categories, selectedCategory, setSelect
             }
           }}
         >
-          Todos
+          {products.allLabel}
         </button>
         {categories.map((category) => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
-            className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
-              selectedCategory === category.id
+            className={`px-5 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${selectedCategory === category.id
                 ? 'text-white shadow-lg'
                 : 'bg-white text-gray-700 border-2 border-gray-200'
-            }`}
-            style={selectedCategory === category.id ? { 
+              }`}
+            style={selectedCategory === category.id ? {
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`
             } : {}}
             onMouseEnter={(e) => {

@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
-import { 
-  EnvelopeIcon, 
-  LockClosedIcon, 
+import {
+  EnvelopeIcon,
+  LockClosedIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
 import ErrorAlert from './ErrorAlert';
+import { useSiteConfig } from '../../hooks/useSiteConfig';
 
 export default function LoginForm({ formData, setFormData, onSubmit, loading, error }) {
+  const config = useSiteConfig();
+
   return (
     <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-gray-100">
       <ErrorAlert error={error} />
@@ -15,7 +18,7 @@ export default function LoginForm({ formData, setFormData, onSubmit, loading, er
         {/* Email */}
         <div>
           <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
-            Correo Electrónico
+            {config.auth.login.emailLabel}
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -36,7 +39,7 @@ export default function LoginForm({ formData, setFormData, onSubmit, loading, er
         {/* Password */}
         <div>
           <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
-            Contraseña
+            {config.auth.login.passwordLabel}
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -63,11 +66,11 @@ export default function LoginForm({ formData, setFormData, onSubmit, loading, er
           {loading ? (
             <>
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Iniciando sesión...</span>
+              <span>{config.auth.login.processingButton}</span>
             </>
           ) : (
             <>
-              <span>Iniciar Sesión</span>
+              <span>{config.auth.login.submitButton}</span>
               <ArrowRightIcon className="w-5 h-5" />
             </>
           )}
@@ -80,7 +83,7 @@ export default function LoginForm({ formData, setFormData, onSubmit, loading, er
           <div className="w-full border-t border-gray-200"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-gray-100 text-gray-500 font-medium">¿Primera vez aquí?</span>
+          <span className="px-4 bg-gray-100 text-gray-500 font-medium">{config.auth.login.noAccount}</span>
         </div>
       </div>
 
@@ -89,7 +92,7 @@ export default function LoginForm({ formData, setFormData, onSubmit, loading, er
         to="/register"
         className="block w-full text-center py-3 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-600 transition-all duration-300"
       >
-        Crear una cuenta nueva
+        {config.auth.login.registerLink}
       </Link>
     </div>
   );

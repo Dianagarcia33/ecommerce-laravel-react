@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { 
-  ShoppingBagIcon, 
-  TagIcon, 
-  UserGroupIcon, 
-  Cog6ToothIcon, 
-  Squares2X2Icon, 
+import {
+  ShoppingBagIcon,
+  TagIcon,
+  UserGroupIcon,
+  Cog6ToothIcon,
+  Squares2X2Icon,
   SparklesIcon,
   PaintBrushIcon,
   ClipboardDocumentListIcon,
@@ -116,7 +116,7 @@ export default function Dashboard() {
         <div className="w-6 h-6 bg-gray-200 rounded mr-2"></div>
         <div className="h-6 bg-gray-200 rounded w-48"></div>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1 - Line Chart Skeleton */}
         <div>
@@ -129,7 +129,7 @@ export default function Dashboard() {
                   <div key={i} className="border-t border-gray-200"></div>
                 ))}
               </div>
-              
+
               {/* Line chart simulation */}
               <svg className="w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <polyline
@@ -140,7 +140,7 @@ export default function Dashboard() {
                   className="animate-pulse"
                 />
               </svg>
-              
+
               {/* X-axis labels */}
               <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 pb-2">
                 {Array(7).fill(0).map((_, i) => (
@@ -150,18 +150,18 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        
+
         {/* Chart 2 - Bar Chart Skeleton */}
         <div>
           <div className="h-4 bg-gray-200 rounded w-32 mb-3 animate-pulse"></div>
           <div className="space-y-2">
             <div className="h-64 bg-gradient-to-t from-gray-100 to-gray-50 rounded-lg flex items-end justify-around p-4 gap-2">
               {[60, 75, 50, 85, 65, 80, 70].map((height, i) => (
-                <div 
-                  key={i} 
-                  className="bg-gradient-to-t from-gray-300 to-gray-200 rounded-t animate-pulse" 
-                  style={{ 
-                    height: `${height}%`, 
+                <div
+                  key={i}
+                  className="bg-gradient-to-t from-gray-300 to-gray-200 rounded-t animate-pulse"
+                  style={{
+                    height: `${height}%`,
                     width: '12%',
                     animationDelay: `${i * 0.1}s`
                   }}
@@ -171,9 +171,9 @@ export default function Dashboard() {
             {/* X-axis labels */}
             <div className="flex justify-between px-2">
               {Array(7).fill(0).map((_, i) => (
-                <div 
-                  key={i} 
-                  className="h-2 bg-gray-200 rounded w-6 animate-pulse" 
+                <div
+                  key={i}
+                  className="h-2 bg-gray-200 rounded w-6 animate-pulse"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 ></div>
               ))}
@@ -236,26 +236,16 @@ export default function Dashboard() {
 
   const menuItems = [
     {
-      id: 'home-editor',
-      title: 'Editor del Home',
-      description: 'Personaliza Hero, Stats, Features y CTA',
-      icon: Squares2X2Icon,
-      link: '/admin/home-editor',
-      gradient: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-      badge: 'CMS Visual',
-      stats: '4 secciones',
-      featured: true,
-    },
-    {
-      id: 'settings',
-      title: 'Configuración Global',
-      description: 'Colores, logo, información de empresa',
+      id: 'cms-editor',
+      title: '🎨 Gestor de Diseño',
+      description: 'Control total: Home, Páginas, Colores y Marca',
       icon: PaintBrushIcon,
-      link: '/admin/settings',
-      gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
-      badge: 'Personalizar',
-      stats: 'Colores y más',
+      link: '/admin/design',
+      gradient: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+      badge: '✨ NUEVO',
+      stats: 'CMS Unificado',
       featured: true,
+      highlight: true, // Destacar visualmente
     },
     {
       id: 'products',
@@ -319,25 +309,25 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
       {/* Header Section */}
       <div className="relative overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `radial-gradient(circle at 20% 50%, ${colors.primary.hex} 0%, transparent 50%),
                               radial-gradient(circle at 80% 80%, ${colors.secondary.hex} 0%, transparent 50%)`
           }}
         ></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
           <div className="text-center mb-4">
             <div className="inline-flex items-center justify-center p-3 rounded-2xl mb-4"
-              style={{ 
+              style={{
                 background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
                 boxShadow: `0 10px 40px -10px ${colors.primary.hex}50`
               }}
             >
               <RocketLaunchIcon className="w-8 h-8 text-white" />
             </div>
-            
+
             <div className="flex items-center justify-center gap-4 mb-3">
               <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
                 Panel de Administración
@@ -345,26 +335,25 @@ export default function Dashboard() {
               <button
                 onClick={loadDashboardData}
                 disabled={loading}
-                className={`p-2 rounded-xl bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all ${
-                  loading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
-                }`}
+                className={`p-2 rounded-xl bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+                  }`}
                 title="Actualizar datos"
               >
-                <ArrowPathIcon 
+                <ArrowPathIcon
                   className={`w-6 h-6 text-gray-700 ${loading ? 'animate-spin' : ''}`}
                 />
               </button>
             </div>
-            
+
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Gestiona tu tienda online desde un solo lugar. Personaliza, configura y controla todo tu negocio.
             </p>
-            
+
             {/* Última actualización */}
             {lastUpdate && !loading && (
               <div className="mt-3 text-xs text-gray-500">
-                Última actualización: {lastUpdate.toLocaleTimeString('es-MX', { 
-                  hour: '2-digit', 
+                Última actualización: {lastUpdate.toLocaleTimeString('es-MX', {
+                  hour: '2-digit',
                   minute: '2-digit',
                   second: '2-digit'
                 })}
@@ -381,30 +370,30 @@ export default function Dashboard() {
               ))
             ) : stats ? (
               [
-                { 
-                  label: 'Productos', 
-                  value: stats.products.total, 
+                {
+                  label: 'Productos',
+                  value: stats.products.total,
                   color: colors.primary.hex,
                   icon: ShoppingBagIcon,
                   subtitle: `${stats.products.active} en stock`
                 },
-                { 
-                  label: 'Categorías', 
-                  value: stats.categories.total, 
+                {
+                  label: 'Categorías',
+                  value: stats.categories.total,
                   color: colors.secondary.hex,
                   icon: TagIcon,
                   subtitle: `${stats.categories.withProducts} con productos`
                 },
-                { 
-                  label: 'Órdenes', 
-                  value: stats.orders.total, 
+                {
+                  label: 'Órdenes',
+                  value: stats.orders.total,
                   color: '#f59e0b',
                   icon: ClipboardDocumentListIcon,
                   subtitle: `${stats.orders.pending} pendientes`
                 },
-                { 
-                  label: 'Usuarios', 
-                  value: stats.users.total, 
+                {
+                  label: 'Usuarios',
+                  value: stats.users.total,
                   color: '#8b5cf6',
                   icon: UserGroupIcon,
                   subtitle: `${stats.users.customers} clientes`
@@ -475,10 +464,9 @@ export default function Dashboard() {
                 {formatCurrency(stats.revenue.thisMonth)}
               </div>
               {stats.revenue.lastMonth > 0 && (
-                <div className={`text-xs font-medium ${
-                  stats.revenue.thisMonth > stats.revenue.lastMonth ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stats.revenue.thisMonth > stats.revenue.lastMonth ? '↑' : '↓'} 
+                <div className={`text-xs font-medium ${stats.revenue.thisMonth > stats.revenue.lastMonth ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                  {stats.revenue.thisMonth > stats.revenue.lastMonth ? '↑' : '↓'}
                   {Math.abs(calculateChange(stats.revenue.thisMonth, stats.revenue.lastMonth))}% vs mes anterior
                 </div>
               )}
@@ -510,7 +498,7 @@ export default function Dashboard() {
               <ChartBarIcon className="w-6 h-6 mr-2" style={{ color: colors.primary.hex }} />
               Ventas de los Últimos 7 Días
             </h3>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Line Chart - Revenue */}
               <div>
@@ -518,28 +506,28 @@ export default function Dashboard() {
                 <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={salesChart}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis 
-                      dataKey="dateFormatted" 
+                    <XAxis
+                      dataKey="dateFormatted"
                       tick={{ fontSize: 12 }}
                       stroke="#9ca3af"
                     />
-                    <YAxis 
+                    <YAxis
                       tick={{ fontSize: 12 }}
                       stroke="#9ca3af"
                       tickFormatter={(value) => `$${value}`}
                     />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value) => [formatCurrency(value), 'Ingresos']}
-                      contentStyle={{ 
+                      contentStyle={{
                         backgroundColor: 'white',
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px',
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="revenue" 
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
                       stroke={colors.primary.hex}
                       strokeWidth={3}
                       dot={{ fill: colors.primary.hex, r: 4 }}
@@ -555,26 +543,26 @@ export default function Dashboard() {
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={salesChart}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis 
-                      dataKey="dateFormatted" 
+                    <XAxis
+                      dataKey="dateFormatted"
                       tick={{ fontSize: 12 }}
                       stroke="#9ca3af"
                     />
-                    <YAxis 
+                    <YAxis
                       tick={{ fontSize: 12 }}
                       stroke="#9ca3af"
                     />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value) => [value, 'Órdenes']}
-                      contentStyle={{ 
+                      contentStyle={{
                         backgroundColor: 'white',
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px',
                         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       }}
                     />
-                    <Bar 
-                      dataKey="orders" 
+                    <Bar
+                      dataKey="orders"
                       fill={colors.secondary.hex}
                       radius={[8, 8, 0, 0]}
                     />
@@ -604,9 +592,9 @@ export default function Dashboard() {
                   {topProducts.map((product, index) => (
                     <div key={product.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                       <div className="flex items-center gap-3 flex-1">
-                        <div 
+                        <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm"
-                          style={{ 
+                          style={{
                             background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
                           }}
                         >
@@ -645,9 +633,8 @@ export default function Dashboard() {
                         <div className="text-xs text-gray-500">{formatCurrency(product.price)}</div>
                       </div>
                       <div className="text-right">
-                        <div className={`text-sm font-bold ${
-                          product.stock <= 3 ? 'text-red-600' : 'text-orange-600'
-                        }`}>
+                        <div className={`text-sm font-bold ${product.stock <= 3 ? 'text-red-600' : 'text-orange-600'
+                          }`}>
                           {product.stock} unidades
                         </div>
                         <div className="text-xs text-gray-500">Reponer stock</div>
@@ -666,7 +653,7 @@ export default function Dashboard() {
             <SparklesIcon className="w-7 h-7 mr-2" style={{ color: colors.primary.hex }} />
             Destacados
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {menuItems.filter(item => item.featured).map((item) => (
               <Link
@@ -675,33 +662,33 @@ export default function Dashboard() {
                 className="group relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-transparent transform hover:-translate-y-2"
               >
                 {/* Gradient Background on Hover */}
-                <div 
+                <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: item.gradient }}
                 ></div>
-                
+
                 {/* Content */}
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-4">
-                    <div 
+                    <div
                       className="p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300"
                       style={{ background: item.gradient }}
                     >
                       <item.icon className="w-8 h-8 text-white" />
                     </div>
-                    
+
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md">
                       {item.badge}
                     </span>
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-white transition-colors">
                     {item.title}
                   </h3>
                   <p className="text-gray-600 mb-4 group-hover:text-white/90 transition-colors">
                     {item.description}
                   </p>
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-500 group-hover:text-white/80 transition-colors">
                       {item.stats}
@@ -722,7 +709,7 @@ export default function Dashboard() {
             <ChartBarIcon className="w-7 h-7 mr-2" style={{ color: colors.secondary.hex }} />
             Gestión
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {menuItems.filter(item => !item.featured).map((item) => (
               item.comingSoon ? (
@@ -735,14 +722,14 @@ export default function Dashboard() {
                       Próximamente
                     </span>
                   </div>
-                  
-                  <div 
+
+                  <div
                     className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 opacity-50"
                     style={{ background: item.gradient }}
                   >
                     <item.icon className="w-7 h-7 text-white" />
                   </div>
-                  
+
                   <h3 className="text-lg font-bold text-gray-400 mb-2">
                     {item.title}
                   </h3>
@@ -757,26 +744,26 @@ export default function Dashboard() {
                   className="group relative bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-gray-100 hover:border-transparent overflow-hidden transform hover:-translate-y-1"
                 >
                   {/* Hover Background */}
-                  <div 
+                  <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
                     style={{ background: item.gradient }}
                   ></div>
-                  
+
                   <div className="relative z-10">
-                    <div 
+                    <div
                       className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300"
                       style={{ background: item.gradient }}
                     >
                       <item.icon className="w-7 h-7 text-white" />
                     </div>
-                    
+
                     <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-gray-900">
                       {item.title}
                     </h3>
                     <p className="text-sm text-gray-600 mb-3 group-hover:text-gray-700">
                       {item.description}
                     </p>
-                    
+
                     <div className="text-xs font-semibold text-gray-500 group-hover:text-gray-700">
                       {item.stats}
                     </div>

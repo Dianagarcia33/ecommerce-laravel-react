@@ -1,25 +1,27 @@
 import { FireIcon } from '@heroicons/react/24/outline';
+import { useSiteConfig } from '../../hooks/useSiteConfig';
 import ProductsGrid from './ProductsGrid';
 
 export default function TrendingSection({ products, loading, onToggleFavorite, isFavorite, colors }) {
+  const config = useSiteConfig();
   return (
-    <div 
+    <div
       className="relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
       }}
     >
       {/* Círculos de color brillante */}
-      <div 
+      <div
         className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20"
         style={{ background: colors.primary.hex }}
       />
-      <div 
+      <div
         className="absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl opacity-20"
         style={{ background: colors.secondary.hex }}
       />
       {/* Patrón de estrellas/puntos */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `radial-gradient(${colors.secondary.hex} 2px, transparent 2px)`,
@@ -27,9 +29,9 @@ export default function TrendingSection({ products, loading, onToggleFavorite, i
         }}
       />
       <div className="relative">
-        <ProductsGrid 
-          title="🔥 Productos en Tendencia"
-          subtitle="Los más populares de la semana"
+        <ProductsGrid
+          title={config.home.sections.trending.title}
+          subtitle={config.home.sections.trending.subtitle}
           icon={FireIcon}
           products={products}
           loading={loading}

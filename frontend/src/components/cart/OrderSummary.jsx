@@ -1,42 +1,45 @@
 import { Link } from 'react-router-dom';
+import { useSiteConfig } from '../../hooks/useSiteConfig';
 import TrustBadges from './TrustBadges';
 
 export default function OrderSummary({ total, user }) {
-  const shipping = total >= 50 ? 0 : 5;
+  const config = useSiteConfig();
+  const { cart } = config;
+  const shipping = total >= cart.shippingThreshold ? 0 : cart.shippingCost;
   const finalTotal = total + shipping;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 sticky top-24 border border-gray-100">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Resumen del Pedido</h2>
-      
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">{cart.summaryTitle}</h2>
+
       <div className="space-y-4 mb-6">
         <div className="flex justify-between text-gray-600">
-          <span>Subtotal:</span>
+          <span>{cart.subtotalLabel}</span>
           <span className="font-semibold text-gray-900">${total.toFixed(2)}</span>
         </div>
-        
+
         <div className="flex justify-between text-gray-600">
-          <span>Envío:</span>
+          <span>{cart.shippingLabel}</span>
           <span className="font-semibold text-gray-900">
             {shipping === 0 ? (
-              <span className="text-green-600 font-bold">¡Gratis!</span>
+              <span className="text-green-600 font-bold">{cart.freeShipping}</span>
             ) : (
               `$${shipping.toFixed(2)}`
             )}
           </span>
         </div>
-        
-        {total < 50 && (
+
+        {total < cart.shippingThreshold && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-sm text-blue-700 font-medium">
-              💡 Agrega <span className="font-bold">${(50 - total).toFixed(2)}</span> más para envío gratis
+              💡 {cart.freeShippingMessage.replace('${amount}', `$${(cart.shippingThreshold - total).toFixed(2)}`)}
             </p>
           </div>
         )}
-        
+
         <div className="border-t-2 border-gray-200 pt-4">
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-gray-900">Total:</span>
+            <span className="text-xl font-bold text-gray-900">{cart.totalLabel}</span>
             <span className="text-3xl font-extrabold bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">
               ${finalTotal.toFixed(2)}
             </span>
@@ -63,18 +66,18 @@ export default function OrderSummary({ total, user }) {
           </div>
         )}
 
-        <Link 
-          to="/checkout" 
+        <Link
+          to="/checkout"
           className="block w-full bg-gradient-to-r from-cyan-400 to-cyan-600 text-white py-4 rounded-full hover:from-cyan-500 hover:to-cyan-700 text-center font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
         >
-          Proceder al Pago
+          {cart.checkoutButton}
         </Link>
-        
-        <Link 
-          to="/products" 
+
+        <Link
+          to="/products"
           className="block w-full py-4 bg-gradient-to-r rounded-full hover:scale-105 bg-white text-gray-900 border-2 border-gray-200 hover:border-cyan-300 text-center font-bold shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          Continuar Comprando
+          {cart.continueButton}
         </Link>
       </div>
 

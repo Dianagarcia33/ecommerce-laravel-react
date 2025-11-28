@@ -12,7 +12,7 @@ const defaultConfig = {
     email: 'info@tienda.com',
     phone: '+1 234 567 890',
     address: '123 Calle Principal, Ciudad',
-    
+
     // Redes sociales
     social: {
       facebook: '#',
@@ -20,6 +20,17 @@ const defaultConfig = {
       instagram: '#',
       linkedin: '#',
     }
+  },
+
+  // ============================================
+  // 📢 BARRA DE ANUNCIOS SUPERIOR
+  // ============================================
+  announcement: {
+    enabled: true,
+    message1: '🚚 Envíos a toda Colombia',
+    message2: '✨ Envío gratis en compras superiores a $50',
+    showIcon: true,
+    closeable: true
   },
 
   // ============================================
@@ -73,36 +84,36 @@ const defaultConfig = {
       gloint: {
         primary: { from: 'blue-600', to: 'blue-800', text: 'blue-700' },
         secondary: { from: 'green-500', to: 'green-600', text: 'green-600' },
-        navbar: { 
+        navbar: {
           background: '#1e293b',  // Slate oscuro - contrasta perfecto con cyan/verde
-          textColor: '#ffffff' 
+          textColor: '#ffffff'
         }
       },
       // 🌙 Contraste oscuro - Logo brillante sobre fondos oscuros
       darkContrast: {
         primary: { from: 'slate-700', to: 'slate-900', text: 'slate-800' },
         secondary: { from: 'cyan-400', to: 'cyan-600', text: 'cyan-500' },
-        navbar: { 
+        navbar: {
           background: '#0f172a',  // Slate-900 profundo
-          textColor: '#ffffff' 
+          textColor: '#ffffff'
         }
       },
       // 🔥 Contraste cálido - Colores cálidos que hacen explotar el logo
       warmContrast: {
         primary: { from: 'orange-500', to: 'red-500', text: 'orange-600' },
         secondary: { from: 'purple-500', to: 'purple-600', text: 'purple-600' },
-        navbar: { 
+        navbar: {
           background: '#7c2d12',  // Naranja oscuro/marrón - contrasta con colores fríos
-          textColor: '#ffffff' 
+          textColor: '#ffffff'
         }
       },
       // 💜 Púrpura elegante - Complementa sin competir con el logo
       purple: {
         primary: { from: 'purple-400', to: 'purple-600', text: 'purple-600' },
         secondary: { from: 'pink-400', to: 'pink-600', text: 'pink-600' },
-        navbar: { 
+        navbar: {
           background: '#581c87',  // Púrpura oscuro - contrasta bien
-          textColor: '#ffffff' 
+          textColor: '#ffffff'
         }
       }
     }
@@ -135,18 +146,22 @@ const defaultConfig = {
         {
           title: 'Calidad Garantizada',
           description: 'Productos verificados y de la más alta calidad',
+          iconName: 'ShieldCheckIcon',
         },
         {
           title: 'Envío Rápido',
           description: 'Entrega express en 24-48 horas',
+          iconName: 'TruckIcon',
         },
         {
           title: 'Pago Seguro',
           description: 'Transacciones 100% protegidas',
+          iconName: 'LockClosedIcon',
         },
         {
           title: 'Ofertas Especiales',
           description: 'Descuentos y promociones exclusivas',
+          iconName: 'TagIcon',
         }
       ]
     },
@@ -161,6 +176,26 @@ const defaultConfig = {
         'Envío Gratis',
         'Garantía Total'
       ]
+    },
+
+    // Secciones de productos en Home
+    sections: {
+      trending: {
+        title: '🔥 Productos en Tendencia',
+        subtitle: 'Los más populares de la semana',
+      },
+      newProducts: {
+        title: '✨ Nuevos Productos',
+        subtitle: 'Recién llegados a nuestra tienda',
+      },
+      favorites: {
+        title: '❤️ Tus Favoritos',
+        subtitle: 'Productos que te encantan',
+      },
+      categories: {
+        title: '🏷️ Categorías',
+        subtitle: 'Explora por categoría',
+      }
     }
   },
 
@@ -209,6 +244,88 @@ const defaultConfig = {
   // 💳 TEXTOS DEL CHECKOUT
   // ============================================
   checkout: {
+    title: 'Finalizar Compra',
+    subtitle: 'Completa tu orden y recibe tus productos',
+    shippingTitle: 'Información de Envío',
+    orderSummaryTitle: 'Resumen de tu Orden',
+    submitButton: 'Confirmar Pedido',
+    processingButton: 'Procesando...',
+    successMessage: '¡Orden creada exitosamente!',
+    guestSuccessMessage: '¡Orden creada exitosamente!\n\nCódigo de rastreo: {token}\n\nGuarda este código para rastrear tu pedido.\nTambién te enviamos un email a {email}',
+    errorMessage: 'Error al crear la orden',
+    labels: {
+      name: 'Nombre Completo',
+      email: 'Correo Electrónico',
+      phone: 'Teléfono',
+      address: 'Dirección de Envío',
+      notes: 'Notas adicionales (opcional)',
+    },
+    placeholders: {
+      name: 'Juan Pérez',
+      email: 'tu@email.com',
+      phone: '+52 123 456 7890',
+      address: 'Calle, Número, Colonia, Ciudad, CP',
+      notes: 'Instrucciones especiales de entrega...',
+    }
+  },
+
+  // ============================================
+  // 🔐 TEXTOS DE AUTENTICACIÓN
+  // ============================================
+  auth: {
+    login: {
+      title: 'Iniciar Sesión',
+      subtitle: 'Bienvenido de vuelta',
+      emailLabel: 'Correo Electrónico',
+      passwordLabel: 'Contraseña',
+      submitButton: 'Iniciar Sesión',
+      processingButton: 'Iniciando sesión...',
+      noAccount: '¿No tienes cuenta?',
+      registerLink: 'Regístrate aquí',
+      errorMessage: 'Error al iniciar sesión',
+    },
+    register: {
+      title: 'Crear Cuenta',
+      subtitle: 'Únete a nuestra comunidad',
+      nameLabel: 'Nombre Completo',
+      emailLabel: 'Correo Electrónico',
+      passwordLabel: 'Contraseña',
+      confirmPasswordLabel: 'Confirmar Contraseña',
+      submitButton: 'Crear Cuenta',
+      processingButton: 'Creando cuenta...',
+      hasAccount: '¿Ya tienes cuenta?',
+      loginLink: 'Inicia sesión aquí',
+      errorMessage: 'Error al crear la cuenta',
+    }
+  },
+
+  // ============================================
+  // 📦 TEXTOS DE ÓRDENES
+  // ============================================
+  orders: {
+    title: 'Mis Órdenes',
+    subtitle: 'Historial de compras',
+    emptyTitle: 'No tienes órdenes',
+    emptySubtitle: 'Cuando realices una compra, aparecerá aquí',
+    emptyButton: 'Ir a Comprar',
+    orderNumber: 'Orden #',
+    date: 'Fecha',
+    total: 'Total',
+    status: 'Estado',
+    viewDetails: 'Ver Detalles',
+    statuses: {
+      pending: 'Pendiente',
+      processing: 'Procesando',
+      shipped: 'Enviado',
+      delivered: 'Entregado',
+      cancelled: 'Cancelado',
+    }
+  },
+
+  // ============================================
+  // 🔍 TEXTOS DE RASTREO
+  // ============================================
+  tracking: {
     title: 'Finalizar Compra',
     subtitle: 'Completa tu orden y recibe tus productos',
     formTitle: 'Datos de Envío',
@@ -319,7 +436,7 @@ const defaultConfig = {
     dateFormat: 'es-ES',
     itemsPerPage: 12,
     maxCartItems: 99,
-    
+
     // Características habilitadas/deshabilitadas
     features: {
       reviews: false,

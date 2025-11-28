@@ -11,6 +11,7 @@ import {
   ChevronRightIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
+import * as OutlineIcons from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 import { useFavorites } from '../../context/FavoritesContext'
@@ -100,44 +101,27 @@ export default function HeroSection({
 
             {/* Features en una sola fila - ARRIBA DEL TÍTULO */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})` }}
-                >
-                  <TruckIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-sm">Envío Express Gratis</p>
-                  <p className="text-xs text-gray-300">Entregas en 24-48h</p>
-                </div>
-              </div>
+              {home.features.items.slice(0, 3).map((item, index) => {
+                const IconComponent = OutlineIcons[item.iconName] || OutlineIcons.StarIcon
+                let bgGradient = `linear-gradient(135deg, ${colors.primary.hex}, ${colors.primary.dark})`
+                if (index === 1) bgGradient = `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})`
+                if (index === 2) bgGradient = `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
 
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.secondary.hex}, ${colors.secondary.dark})` }}
-                >
-                  <ShieldCheckIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-sm">Compra 100% Segura</p>
-                  <p className="text-xs text-gray-300">Protección garantizada</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-                >
-                  <TagIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-sm">Mejor Precio</p>
-                  <p className="text-xs text-gray-300">Ofertas exclusivas</p>
-                </div>
-              </div>
+                return (
+                  <div key={index} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
+                      style={{ background: bgGradient }}
+                    >
+                      <IconComponent className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-sm">{item.title}</p>
+                      <p className="text-xs text-gray-300">{item.description}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Título principal con gradiente */}
@@ -170,7 +154,7 @@ export default function HeroSection({
               >
                 <span className="relative z-10 flex items-center gap-3">
                   <ShoppingBagIcon className="w-6 h-6" />
-                  {home.hero.buttonText}
+                  {home.hero.primaryButton}
                   <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />

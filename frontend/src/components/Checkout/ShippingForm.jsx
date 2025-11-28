@@ -1,6 +1,9 @@
 import GuestMessage from './GuestMessage';
+import { useSiteConfig } from '../../hooks/useSiteConfig';
 
 export default function ShippingForm({ user, error, formData, setFormData, loading, onSubmit }) {
+  const config = useSiteConfig();
+
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
       <div className="flex items-center gap-3 mb-6">
@@ -9,7 +12,7 @@ export default function ShippingForm({ user, error, formData, setFormData, loadi
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Datos de Envío</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{config.checkout.shippingTitle}</h2>
       </div>
 
       {/* Mensaje para invitados */}
@@ -26,60 +29,60 @@ export default function ShippingForm({ user, error, formData, setFormData, loadi
 
       <form onSubmit={onSubmit} className="space-y-5">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Nombre Completo</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">{config.checkout.labels.name}</label>
           <input
             type="text"
             required
             value={formData.customer_name}
             onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none"
-            placeholder="Juan Pérez"
+            placeholder={config.checkout.placeholders.name}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">{config.checkout.labels.email}</label>
           <input
             type="email"
             required
             value={formData.customer_email}
             onChange={(e) => setFormData({ ...formData, customer_email: e.target.value })}
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none"
-            placeholder="juan@email.com"
+            placeholder={config.checkout.placeholders.email}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Teléfono</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">{config.checkout.labels.phone}</label>
           <input
             type="tel"
             value={formData.customer_phone}
             onChange={(e) => setFormData({ ...formData, customer_phone: e.target.value })}
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none"
-            placeholder="+1 234 567 890"
+            placeholder={config.checkout.placeholders.phone}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Dirección de Envío</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">{config.checkout.labels.address}</label>
           <textarea
             required
             rows="3"
             value={formData.shipping_address}
             onChange={(e) => setFormData({ ...formData, shipping_address: e.target.value })}
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none resize-none"
-            placeholder="Calle Principal 123, Apartamento 4B, Ciudad"
+            placeholder={config.checkout.placeholders.address}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Notas (Opcional)</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">{config.checkout.labels.notes}</label>
           <textarea
             rows="2"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100 transition-all outline-none resize-none"
-            placeholder="Instrucciones especiales de entrega..."
+            placeholder={config.checkout.placeholders.notes}
           />
         </div>
 
@@ -91,14 +94,14 @@ export default function ShippingForm({ user, error, formData, setFormData, loadi
           {loading ? (
             <>
               <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
-              <span>Procesando...</span>
+              <span>{config.checkout.processingButton}</span>
             </>
           ) : (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span>Confirmar Orden</span>
+              <span>{config.checkout.submitButton}</span>
             </>
           )}
         </button>

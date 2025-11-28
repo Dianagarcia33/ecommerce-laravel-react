@@ -3,14 +3,14 @@ import { ShoppingCartIcon, HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 
-export default function ProductCard({ 
-  product, 
-  index, 
-  onAddToCart, 
-  onToggleFavorite, 
-  isFavorite 
+export default function ProductCard({
+  product,
+  index,
+  onAddToCart,
+  onToggleFavorite,
+  isFavorite
 }) {
-  const { theme } = useSiteConfig()
+  const { theme, products } = useSiteConfig()
   const { colors } = theme
 
   return (
@@ -54,12 +54,12 @@ export default function ProductCard({
         {/* Badge de stock */}
         {product.stock < 10 && product.stock > 0 && (
           <div className="absolute top-3 right-3 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-            ¡Últimas {product.stock}!
+            {products.lowStockBadge.replace('{stock}', product.stock)}
           </div>
         )}
         {product.stock === 0 && (
           <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-            Agotado
+            {products.outOfStockBadge}
           </div>
         )}
       </div>
@@ -67,7 +67,7 @@ export default function ProductCard({
       {/* Contenido */}
       <div className="p-5">
         <Link to={`/product/${product.id}/parallax`}>
-          <h3 
+          <h3
             className="text-lg font-bold text-gray-900 mb-2 transition-colors line-clamp-2 min-h-[56px]"
             onMouseEnter={(e) => e.target.style.color = colors.primary.hex}
             onMouseLeave={(e) => e.target.style.color = '#111827'}
@@ -83,9 +83,9 @@ export default function ProductCard({
         {/* Precio y botón */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <div>
-            <span 
+            <span
               className="text-3xl font-extrabold"
-              style={{ 
+              style={{
                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.primary.dark})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -98,12 +98,11 @@ export default function ProductCard({
           <button
             onClick={() => onAddToCart(product)}
             disabled={product.stock === 0}
-            className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${
-              product.stock === 0
+            className={`flex items-center gap-1 px-4 py-2 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-md ${product.stock === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'text-white hover:shadow-lg'
-            }`}
-            style={product.stock > 0 ? { 
+              }`}
+            style={product.stock > 0 ? {
               background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.secondary.dark})`
             } : {}}
             onMouseEnter={(e) => {
@@ -118,7 +117,7 @@ export default function ProductCard({
             }}
           >
             <ShoppingCartIcon className="w-5 h-5" />
-            <span className="hidden sm:inline">Agregar</span>
+            <span className="hidden sm:inline">{products.addToCartButton}</span>
           </button>
         </div>
       </div>

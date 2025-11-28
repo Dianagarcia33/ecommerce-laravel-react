@@ -1,6 +1,9 @@
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { useSiteConfig } from '../../hooks/useSiteConfig'
 
 export default function SubmitButton({ loading }) {
+  const config = useSiteConfig()
+
   return (
     <button
       type="submit"
@@ -10,11 +13,11 @@ export default function SubmitButton({ loading }) {
       {loading ? (
         <>
           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          <span>Registrando...</span>
+          <span>{config.auth.register.processingButton}</span>
         </>
       ) : (
         <>
-          <span>Crear Cuenta</span>
+          <span>{config.auth.register.submitButton}</span>
           <ArrowRightIcon className="w-5 h-5" />
         </>
       )}

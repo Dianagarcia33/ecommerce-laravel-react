@@ -12,10 +12,10 @@ export default function EmptyOrders() {
       <div className="bg-white rounded-3xl shadow-xl p-12 max-w-md mx-auto">
         <ShoppingBagIcon className="w-24 h-24 mx-auto text-gray-300 mb-6" />
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
-          No tienes órdenes aún
+          {config.orders.emptyTitle}
         </h2>
         <p className="text-gray-600 mb-8">
-          Explora nuestro catálogo y realiza tu primera compra
+          {config.orders.emptySubtitle}
         </p>
         <Link
           to="/products"
@@ -23,7 +23,7 @@ export default function EmptyOrders() {
           style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
         >
           <SparklesIcon className="w-6 h-6" />
-          Explorar Productos
+          {config.orders.emptyButton}
           <ArrowRightIcon className="w-5 h-5" />
         </Link>
       </div>

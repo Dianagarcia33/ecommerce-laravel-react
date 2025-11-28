@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useSiteConfig } from '../hooks/useSiteConfig';
 import EmptyCart from '../components/Cart/EmptyCart';
 import CartItem from '../components/Cart/CartItem';
 import OrderSummary from '../components/Cart/OrderSummary';
@@ -7,6 +8,7 @@ import OrderSummary from '../components/Cart/OrderSummary';
 export default function Cart() {
   const { user } = useAuth();
   const { cart, updateQuantity, removeFromCart, getTotal } = useCart();
+  const { cart: cartConfig } = useSiteConfig();
 
   if (cart.length === 0) {
     return <EmptyCart />;
@@ -19,15 +21,15 @@ export default function Cart() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Carrito de Compras</h1>
-          <p className="text-gray-600">Revisa tus productos antes de finalizar la compra</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">{cartConfig.title}</h1>
+          <p className="text-gray-600">{cartConfig.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item, index) => (
-              <CartItem 
+              <CartItem
                 key={item.id}
                 item={item}
                 index={index}

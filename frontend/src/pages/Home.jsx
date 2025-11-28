@@ -10,7 +10,9 @@ import {
   TrendingSection,
   NewProductsSection,
   FavoritesSection,
-  RecentlyViewedSection
+  RecentlyViewedSection,
+  StatsSection,
+  CTASection
 } from '../components/home';
 
 export default function Home() {
@@ -115,8 +117,14 @@ export default function Home() {
         colors={colors}
       />
 
+      {/* Stats Section */}
+      <StatsSection />
+
       {/* Features Bar */}
       <FeaturesBar />
+
+      {/* CTA Section */}
+      <CTASection />
 
       {/* Recently Viewed Section */}
       <RecentlyViewedSection />

@@ -10,17 +10,17 @@ export default function OrderCard({ order, user }) {
   return (
     <div className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
       {/* Header */}
-      <div 
+      <div
         className={`${statusColors.bg} ${statusColors.border} border-b-2 p-6`}
       >
         <div className="flex justify-between items-start">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <h2 className="text-2xl font-bold text-gray-900">
-                Orden #{order.id}
+                {config.orders.orderNumber}{order.id}
               </h2>
               <span className={`px-3 py-1 rounded-full text-sm font-bold border-2 ${statusColors.badge} ${statusColors.text}`}>
-                {getStatusIcon(order.status)} {getStatusText(order.status)}
+                {getStatusIcon(order.status)} {getStatusText(order.status, config)}
               </span>
             </div>
             <p className="text-gray-600 font-medium">
@@ -34,7 +34,7 @@ export default function OrderCard({ order, user }) {
             </p>
             {user?.role === 'admin' && (
               <p className="text-gray-700 mt-2 font-semibold">
-                👤 {order.customer_name} 
+                {config.orders.customerLabel} {order.customer_name}
                 <span className="text-gray-500 ml-2">({order.customer_email})</span>
               </p>
             )}
@@ -76,29 +76,29 @@ export default function OrderCard({ order, user }) {
         {/* Details */}
         <div className="mt-6 pt-6 border-t-2 border-gray-100 space-y-3">
           <div className="flex items-start gap-2">
-            <span className="font-bold text-gray-700 min-w-[140px]">📍 Dirección:</span>
+            <span className="font-bold text-gray-700 min-w-[140px]">{config.orders.shippingLabel}</span>
             <span className="text-gray-600 flex-1">{order.shipping_address}</span>
           </div>
           {order.notes && (
             <div className="flex items-start gap-2">
-              <span className="font-bold text-gray-700 min-w-[140px]">📝 Notas:</span>
+              <span className="font-bold text-gray-700 min-w-[140px]">{config.orders.notesLabel}</span>
               <span className="text-gray-600 flex-1">{order.notes}</span>
             </div>
           )}
         </div>
 
         {/* Total */}
-        <div 
+        <div
           className="mt-6 pt-6 border-t-2 flex justify-between items-center rounded-xl p-4"
-          style={{ 
+          style={{
             background: `linear-gradient(135deg, ${colors.primary.hex}15, ${colors.secondary.hex}15)`,
             borderColor: colors.primary.hex
           }}
         >
-          <span className="text-2xl font-extrabold text-gray-900">Total:</span>
-          <span 
+          <span className="text-2xl font-extrabold text-gray-900">{config.orders.totalLabel}</span>
+          <span
             className="text-4xl font-extrabold"
-            style={{ 
+            style={{
               background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'

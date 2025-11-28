@@ -9,3 +9,5 @@ export { default as NewProductsSection } from './NewProductsSection';
 export { default as FavoritesSection } from './FavoritesSection';
 export { default as RecentlyViewedSection } from './RecentlyViewedSection';
 export { default as SearchBar } from './SearchBar';
+export { default as StatsSection } from './StatsSection';
+export { default as CTASection } from './CTASection';

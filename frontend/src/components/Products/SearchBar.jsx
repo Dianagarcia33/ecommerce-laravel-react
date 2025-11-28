@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useSiteConfig } from '../../hooks/useSiteConfig'
 
 export default function SearchBar({ searchTerm, setSearchTerm }) {
-  const { theme } = useSiteConfig()
+  const { theme, products } = useSiteConfig()
   const { colors } = theme
 
   return (
@@ -12,7 +12,7 @@ export default function SearchBar({ searchTerm, setSearchTerm }) {
       </div>
       <input
         type="text"
-        placeholder="Buscar productos..."
+        placeholder={products.searchPlaceholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl transition-all outline-none"

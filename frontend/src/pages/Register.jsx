@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useSiteConfig } from '../hooks/useSiteConfig'
 import { EnvelopeIcon, LockClosedIcon, UserIcon } from '@heroicons/react/24/outline'
 import {
   AnimatedBackground,
@@ -15,6 +16,7 @@ import {
 } from '../components/Register'
 
 export default function Register() {
+  const config = useSiteConfig()
   const navigate = useNavigate()
   const { register } = useAuth()
   const [formData, setFormData] = useState({
@@ -61,7 +63,7 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <FormInput
               id="name"
-              label="Nombre Completo"
+              label={config.auth.register.nameLabel}
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -72,7 +74,7 @@ export default function Register() {
 
             <FormInput
               id="email"
-              label="Correo Electrónico"
+              label={config.auth.register.emailLabel}
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -83,7 +85,7 @@ export default function Register() {
 
             <FormInput
               id="password"
-              label="Contraseña"
+              label={config.auth.register.passwordLabel}
               type="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -96,7 +98,7 @@ export default function Register() {
 
             <FormInput
               id="password_confirmation"
-              label="Confirmar Contraseña"
+              label={config.auth.register.confirmPasswordLabel}
               type="password"
               value={formData.password_confirmation}
               onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
@@ -108,7 +110,7 @@ export default function Register() {
             <SubmitButton loading={loading} />
           </form>
 
-          <FormDivider text="¿Ya tienes cuenta?" />
+          <FormDivider text={config.auth.register.hasAccount} />
           <LoginLink />
         </div>
 

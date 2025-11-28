@@ -26,18 +26,18 @@ export default function OrdersHeader({ user, ordersCount }) {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <ShoppingBagIcon 
+          <ShoppingBagIcon
             className="w-12 h-12"
             style={{ color: colors.secondary.hex }}
           />
           <h1 className="text-5xl md:text-6xl font-extrabold drop-shadow-2xl">
-            {user?.role === 'admin' ? 'Todas las Órdenes' : 'Mis Órdenes'}
+            {user?.role === 'admin' ? config.orders.adminTitle : config.orders.title}
           </h1>
         </div>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-          {ordersCount > 0 
+          {ordersCount > 0
             ? `${ordersCount} orden${ordersCount !== 1 ? 'es' : ''} registrada${ordersCount !== 1 ? 's' : ''}`
-            : 'Aún no tienes órdenes'
+            : config.orders.emptyMessage
           }
         </p>
       </div>

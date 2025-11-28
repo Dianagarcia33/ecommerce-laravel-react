@@ -1078,50 +1078,26 @@ function CtaEditor({ config, updateSection }) {
           <ShieldCheckIcon className="w-5 h-5 mr-2" />
           Badges de Confianza
         </h4>
-        
+
         <p className="text-sm text-gray-600 mb-4">
           Pequeños indicadores que aparecen debajo de los botones para generar confianza
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <InputField
-              label="Badge 1"
-              value={config.badge1 || 'Compra Segura'}
-              onChange={(e) => updateSection('cta', 'badge1', e.target.value)}
-              placeholder="Compra Segura"
-            />
-          </div>
-
-          <div>
-            <InputField
-              label="Badge 2"
-              value={config.badge2 || 'Envío Gratis'}
-              onChange={(e) => updateSection('cta', 'badge2', e.target.value)}
-              placeholder="Envío Gratis"
-            />
-          </div>
-
-          <div>
-            <InputField
-              label="Badge 3"
-              value={config.badge3 || 'Garantía Total'}
-              onChange={(e) => updateSection('cta', 'badge3', e.target.value)}
-              placeholder="Garantía Total"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2 mt-4">
-          <input
-            type="checkbox"
-            checked={config.showBadges !== false}
-            onChange={(e) => updateSection('cta', 'showBadges', e.target.checked)}
-            className="w-4 h-4 text-purple-600"
-          />
-          <label className="text-sm text-gray-700">
-            Mostrar badges de confianza
-          </label>
+          {(config.badges || ['Compra Segura', 'Envío Gratis', 'Garantía Total']).map((badge, index) => (
+            <div key={index}>
+              <InputField
+                label={`Badge ${index + 1}`}
+                value={badge}
+                onChange={(e) => {
+                  const newBadges = [...(config.badges || ['Compra Segura', 'Envío Gratis', 'Garantía Total'])]
+                  newBadges[index] = e.target.value
+                  updateSection('cta', 'badges', newBadges)
+                }}
+                placeholder={`Badge ${index + 1}`}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

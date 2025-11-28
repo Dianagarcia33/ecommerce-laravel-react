@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext'
 import { useFavorites } from '../context/FavoritesContext'
 import { useSiteConfig } from '../hooks/useSiteConfig'
 import logoGlointPlace from '../assets/logos/logo.png';
+import AnnouncementBar from './AnnouncementBar'
 import { useState, useEffect, useRef } from 'react'
 import {
   ShoppingCartIcon,
@@ -34,6 +35,7 @@ export default function Layout() {
   const [searchResults, setSearchResults] = useState([])
   const [showSearchResults, setShowSearchResults] = useState(false)
   const [allProducts, setAllProducts] = useState([])
+  const [announcementVisible, setAnnouncementVisible] = useState(true)
   const searchRef = useRef(null)
   
   // Obtener configuración del sitio (se actualiza automáticamente)
@@ -345,12 +347,18 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Announcement Bar */}
+      <AnnouncementBar />
+
       {/* Header con fondo animado igual que el login */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navbar.borderBottom ? 'border-b border-white/10' : ''} bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900`}
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 ${navbar.borderBottom ? 'border-b border-white/10' : ''} bg-gradient-to-br from-slate-900 via-cyan-900 to-teal-900`}
         style={{
+          top: config.announcement?.enabled ? '44px' : '0',
           backdropFilter: scrolled && navbar.blur ? 'blur(12px)' : 'none',
-          boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.2)' : '0 4px 15px rgba(0, 0, 0, 0.1)'
+          boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.2)' : '0 4px 15px rgba(0, 0, 0, 0.1)',
+          margin: 0,
+          border: 'none'
         }}
       >
         {/* Fondo animado de la navbar */}
@@ -784,8 +792,8 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* Spacer for fixed header */}
-      <div className="h-24"></div>
+      {/* Spacer for fixed header and announcement bar */}
+      <div style={{ height: config.announcement?.enabled ? '140px' : '96px' }}></div>
 
       {/* Main Content */}
       <main className="min-h-screen">
